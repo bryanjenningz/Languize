@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 
 const initialState = {
   text: "",
-  messages: []
+  messages: [],
+  editingNote: null
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -26,6 +27,8 @@ export const reducer = (state = initialState, action = {}) => {
               : m
         )
       };
+    case "EDIT_NOTE":
+      return { ...state, editingNote: action.note };
     default:
       return state;
   }
@@ -42,6 +45,17 @@ export const addNote = ({
   translationAudio
 }) => ({
   type: "ADD_NOTE",
+  note: { id, messageId, text, translation, textAudio, translationAudio }
+});
+export const editNote = ({
+  id,
+  messageId,
+  text,
+  translation,
+  textAudio,
+  translationAudio
+}) => ({
+  type: "EDIT_NOTE",
   note: { id, messageId, text, translation, textAudio, translationAudio }
 });
 

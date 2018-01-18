@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import App, { reducer, changeText, addMessage, addNote } from "./App";
+import App, { reducer, changeText, addMessage, addNote, editNote } from "./App";
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
@@ -16,7 +16,7 @@ it("renders without crashing", () => {
 });
 
 it("returns correct initial state", () => {
-  expect(reducer()).toEqual({ text: "", messages: [] });
+  expect(reducer()).toEqual({ text: "", messages: [], editingNote: null });
 });
 
 it("changes text", () => {
@@ -71,5 +71,32 @@ it("adds a note to a message", () => {
         ]
       }
     ]
+  });
+});
+
+it("edits a note for a message id", () => {
+  expect(
+    reducer(
+      {
+        editingNote: null
+      },
+      editNote({
+        id: "12",
+        messageId: "23",
+        text: "hey",
+        translation: "你好！",
+        textAudio: "hey.mp3",
+        translationAudio: "你好！.mp3"
+      })
+    )
+  ).toEqual({
+    editingNote: {
+      id: "12",
+      messageId: "23",
+      text: "hey",
+      translation: "你好！",
+      textAudio: "hey.mp3",
+      translationAudio: "你好！.mp3"
+    }
   });
 });

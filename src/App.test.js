@@ -2,7 +2,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import App, { reducer, changeText, addMessage, addNote, editNote } from "./App";
+import App, {
+  initialState,
+  reducer,
+  changeText,
+  addMessage,
+  addNote,
+  editNote
+} from "./App";
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
@@ -16,7 +23,7 @@ it("renders without crashing", () => {
 });
 
 it("returns correct initial state", () => {
-  expect(reducer()).toEqual({ text: "", messages: [], editingNote: null });
+  expect(reducer()).toEqual(initialState);
 });
 
 it("changes text", () => {

@@ -63,12 +63,40 @@ const randomId = () => String(Math.random()).slice(2);
 
 const App = ({ text, messages, changeText, addMessage }) => (
   <div style={{ textAlign: "center", maxWidth: 500, margin: "0 auto" }}>
-    <input
-      placeholder="Enter text here"
-      onChange={e => changeText(e.target.value)}
-      value={text}
-    />
-    <button onClick={() => addMessage(randomId(), text)}>+</button>
+    <div
+      style={{
+        display: "flex",
+        height: 50
+      }}
+    >
+      <input
+        placeholder="Enter text here"
+        onChange={e => changeText(e.target.value)}
+        value={text}
+        style={{
+          width: "80%",
+          textAlign: "center",
+          fontSize: 20,
+          border: 0
+        }}
+      />
+      <div
+        onClick={() => addMessage(randomId(), text)}
+        style={{
+          width: "20%",
+          backgroundColor: "white",
+          fontSize: 20,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+          backgroundColor: "#13c713",
+          color: "white"
+        }}
+      >
+        +
+      </div>
+    </div>
     <div>{messages.map(m => <div key={m.id}>{m.text}</div>)}</div>
   </div>
 );

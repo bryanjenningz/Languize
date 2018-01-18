@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import App, { reducer, changeText, addMessage } from "./App";
+import App, { reducer, changeText, addMessage, addNote } from "./App";
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
@@ -32,5 +32,44 @@ it("adds message to end of messages", () => {
   ).toEqual({
     text: "",
     messages: [{ id: "122", text: "hi" }, { id: "123", text: "hello" }]
+  });
+});
+
+it("adds a note to a message", () => {
+  expect(
+    reducer(
+      {
+        messages: [
+          { id: "1", text: "hi", notes: [] },
+          { id: "23", text: "hello", notes: [] }
+        ]
+      },
+      addNote({
+        id: "1111",
+        messageId: "23",
+        text: "hello",
+        translation: "你好",
+        textAudio: "hello.mp3",
+        translationAudio: "你好.mp3"
+      })
+    )
+  ).toEqual({
+    messages: [
+      { id: "1", text: "hi", notes: [] },
+      {
+        id: "23",
+        text: "hello",
+        notes: [
+          {
+            id: "1111",
+            messageId: "23",
+            text: "hello",
+            translation: "你好",
+            textAudio: "hello.mp3",
+            translationAudio: "你好.mp3"
+          }
+        ]
+      }
+    ]
   });
 });

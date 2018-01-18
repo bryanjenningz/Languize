@@ -16,6 +16,16 @@ export const reducer = (state = initialState, action = {}) => {
         text: "",
         messages: state.messages.concat({ id: action.id, text: action.text })
       };
+    case "ADD_NOTE":
+      return {
+        ...state,
+        messages: state.messages.map(
+          m =>
+            m.id === action.note.messageId
+              ? { ...m, notes: m.notes.concat(action.note) }
+              : m
+        )
+      };
     default:
       return state;
   }
@@ -23,6 +33,17 @@ export const reducer = (state = initialState, action = {}) => {
 
 export const changeText = text => ({ type: "CHANGE_TEXT", text });
 export const addMessage = (id, text) => ({ type: "ADD_MESSAGE", id, text });
+export const addNote = ({
+  id,
+  messageId,
+  text,
+  translation,
+  textAudio,
+  translationAudio
+}) => ({
+  type: "ADD_NOTE",
+  note: { id, messageId, text, translation, textAudio, translationAudio }
+});
 
 const randomId = () => String(Math.random()).slice(2);
 

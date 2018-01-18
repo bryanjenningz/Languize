@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import App, { reducer, initialState, changeText } from "./App";
+import App, { reducer, changeText, addMessage } from "./App";
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
@@ -16,9 +16,21 @@ it("renders without crashing", () => {
 });
 
 it("returns correct initial state", () => {
-  expect(reducer()).toEqual(initialState);
+  expect(reducer()).toEqual({ text: "", messages: [] });
 });
 
-it("should change text", () => {
+it("changes text", () => {
   expect(reducer({ text: "" }, changeText("hello"))).toEqual({ text: "hello" });
+});
+
+it("adds message to end of messages", () => {
+  expect(
+    reducer(
+      { messages: [{ id: "122", text: "hi" }] },
+      addMessage("123", "hello")
+    )
+  ).toEqual({
+    text: "",
+    messages: [{ id: "122", text: "hi" }, { id: "123", text: "hello" }]
+  });
 });

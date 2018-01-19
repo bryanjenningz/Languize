@@ -150,7 +150,10 @@ const App = ({
             backgroundColor: "rgba(0, 0, 0, 0.7)",
             zIndex: 1
           }}
-          onClick={cancelNote}
+          onClick={e => {
+            e.stopPropagation();
+            cancelNote();
+          }}
         />
         <div
           style={{
@@ -164,78 +167,94 @@ const App = ({
         >
           <div
             style={{
-              width: 400,
-              height: 270,
-              backgroundColor: "#eee",
-              paddingTop: 25,
-              zIndex: 2
+              width: "100%",
+              zIndex: 2,
+              padding: "0 10px"
+            }}
+            onClick={e => {
+              if (e.currentTarget === e.target) {
+                e.stopPropagation();
+                cancelNote();
+              }
             }}
           >
-            <textarea
-              value={editingNote.text}
-              onChange={e => editNote({ ...editingNote, text: e.target.value })}
-              placeholder="Enter text"
-              style={{
-                width: "80%",
-                height: 70,
-                fontSize: 15,
-                marginBottom: 10,
-                border: 0
-              }}
-            />
-            <textarea
-              value={editingNote.translation}
-              onChange={e =>
-                editNote({ ...editingNote, translation: e.target.value })
-              }
-              placeholder="Enter translation"
-              style={{
-                width: "80%",
-                height: 70,
-                fontSize: 15,
-                marginBottom: 10,
-                border: 0
-              }}
-            />
             <div
               style={{
-                display: "flex",
-                width: "80%",
+                maxWidth: 680,
                 margin: "0 auto",
-                height: 50
+                height: 270,
+                backgroundColor: "#eee",
+                paddingTop: 25
               }}
             >
+              <textarea
+                value={editingNote.text}
+                onChange={e =>
+                  editNote({ ...editingNote, text: e.target.value })
+                }
+                placeholder="Enter text"
+                style={{
+                  width: "80%",
+                  height: 70,
+                  fontSize: 15,
+                  marginBottom: 10,
+                  border: 0
+                }}
+              />
+              <textarea
+                value={editingNote.translation}
+                onChange={e =>
+                  editNote({ ...editingNote, translation: e.target.value })
+                }
+                placeholder="Enter translation"
+                style={{
+                  width: "80%",
+                  height: 70,
+                  fontSize: 15,
+                  marginBottom: 10,
+                  border: 0
+                }}
+              />
               <div
                 style={{
-                  flex: 1,
-                  color: "white",
-                  backgroundColor: "#13c713",
                   display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer"
-                }}
-                onClick={() => {
-                  if (editingNote.translation.trim()) {
-                    addNote(editingNote);
-                  }
+                  width: "80%",
+                  margin: "0 auto",
+                  height: 50
                 }}
               >
-                ✔
-              </div>
-              <div
-                style={{
-                  flex: 1,
-                  color: "white",
-                  backgroundColor: "#c71334",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer"
-                }}
-                onClick={cancelNote}
-              >
-                ✖
+                <div
+                  style={{
+                    flex: 1,
+                    color: "white",
+                    backgroundColor: "#13c713",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer"
+                  }}
+                  onClick={() => {
+                    if (editingNote.translation.trim()) {
+                      addNote(editingNote);
+                    }
+                  }}
+                >
+                  ✔
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    color: "white",
+                    backgroundColor: "#c71334",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer"
+                  }}
+                  onClick={cancelNote}
+                >
+                  ✖
+                </div>
               </div>
             </div>
           </div>

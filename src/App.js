@@ -250,20 +250,29 @@ const App = ({
               backgroundColor: "white",
               fontSize: 20,
               position: "relative",
-              left: i % 2 === 1 ? "20%" : 0,
-              cursor: "pointer"
+              left: i % 2 === 1 ? "20%" : 0
             }}
-            onClick={() =>
-              editNote({
-                id: randomId(),
-                messageId: m.id,
-                text: m.text,
-                translation: "",
-                textAudio: "",
-                translationAudio: ""
-              })
-            }
           >
+            <div
+              style={{
+                position: "absolute",
+                top: 10,
+                left: 15,
+                cursor: "pointer"
+              }}
+              onClick={() =>
+                editNote({
+                  id: randomId(),
+                  messageId: m.id,
+                  text: m.text,
+                  translation: "",
+                  textAudio: "",
+                  translationAudio: ""
+                })
+              }
+            >
+              ✎
+            </div>
             {m.notes.length ? (
               <div
                 style={

@@ -5,7 +5,20 @@ export const initialState = {
   text: "",
   messages: [
     { id: "1", text: "Hello", notes: [] },
-    { id: "2", text: "你好", notes: [] },
+    {
+      id: "2",
+      text: "你好",
+      notes: [
+        {
+          id: "n2-1",
+          messageId: "2",
+          text: "你好",
+          translation: "hello",
+          textAudio: "",
+          translationAudio: ""
+        }
+      ]
+    },
     {
       id: "3",
       text:
@@ -16,10 +29,20 @@ export const initialState = {
     {
       id: "5",
       text: "Your Chinese is soooooo gooood! How did you learn?",
-      notes: []
+      notes: [
+        {
+          id: "n2-1",
+          messageId: "2",
+          text: "Your Chinese is so good! How did you learn it?",
+          translation: "你的中文真棒！你怎么学的？",
+          textAudio: "",
+          translationAudio: ""
+        }
+      ]
     }
   ],
-  editingNote: null
+  editingNote: null,
+  expandedMessageId: null
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -47,6 +70,8 @@ export const reducer = (state = initialState, action = {}) => {
       return { ...state, editingNote: action.note };
     case "CANCEL_NOTE":
       return { ...state, editingNote: null };
+    case "EXPAND_MESSAGE":
+      return { ...state, expandedMessageId: action.id };
     default:
       return state;
   }
@@ -77,6 +102,7 @@ export const editNote = ({
   note: { id, messageId, text, translation, textAudio, translationAudio }
 });
 export const cancelNote = () => ({ type: "CANCEL_NOTE" });
+export const expandMessage = id => ({ type: "EXPAND_MESSAGE", id });
 
 const randomId = () => String(Math.random()).slice(2);
 
@@ -84,11 +110,13 @@ const App = ({
   text,
   messages,
   editingNote,
+  expandedMessageId,
   changeText,
   addMessage,
   editNote,
   addNote,
-  cancelNote
+  cancelNote,
+  expandMessage
 }) => (
   <div
     style={{
@@ -236,7 +264,52 @@ const App = ({
               })
             }
           >
+            {m.notes.length ? (
+              <div
+                style={
+                  m.id === expandedMessageId
+                    ? {
+                        position: "absolute",
+                        top: 10,
+                        right: 15,
+                        fontSize: 25,
+                        userSelect: "none"
+                      }
+                    : {
+                        position: "absolute",
+                        top: -20,
+                        right: 10,
+                        fontSize: 50,
+                        userSelect: "none"
+                      }
+                }
+                onClick={e => {
+                  e.stopPropagation();
+                  expandMessage(m.id !== expandedMessageId ? m.id : null);
+                }}
+              >
+                {m.id === expandedMessageId ? "⌃" : "⌄"}
+              </div>
+            ) : null}
             {m.text}
+            {m.notes.length && m.id === expandedMessageId ? (
+              <div>
+                {m.notes.map(n => (
+                  <div
+                    key={n.id}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      borderTop: "1px solid #aaa",
+                      marginTop: 10,
+                      paddingTop: 10
+                    }}
+                  >
+                    <div>{n.translation}</div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
         ))}
       </div>
@@ -279,11 +352,19 @@ const App = ({
   </div>
 );
 
-const mapState = ({ text, messages, editingNote }) => ({
+const mapState = ({ text, messages, editingNote, expandedMessageId }) => ({
   text,
   messages,
-  editingNote
+  editingNote,
+  expandedMessageId
 });
-const mapDispatch = { changeText, addMessage, editNote, addNote, cancelNote };
+const mapDispatch = {
+  changeText,
+  addMessage,
+  editNote,
+  addNote,
+  cancelNote,
+  expandMessage
+};
 
 export default connect(mapState, mapDispatch)(App);

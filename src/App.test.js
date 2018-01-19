@@ -9,7 +9,8 @@ import App, {
   addMessage,
   addNote,
   editNote,
-  cancelNote
+  cancelNote,
+  expandMessage
 } from "./App";
 
 it("renders without crashing", () => {
@@ -113,5 +114,11 @@ it("edits a note for a message id", () => {
 it("cancels editing the note", () => {
   expect(reducer({ editingNote: {} }, cancelNote())).toEqual({
     editingNote: null
+  });
+});
+
+it("sets expanded message id", () => {
+  expect(reducer({ expandedMessageId: null }, expandMessage("123"))).toEqual({
+    expandedMessageId: "123"
   });
 });

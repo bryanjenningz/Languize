@@ -35,6 +35,7 @@ export const reducer = (state = initialState, action = {}) => {
     case "ADD_NOTE":
       return {
         ...state,
+        editingNote: null,
         messages: state.messages.map(
           m =>
             m.id === action.note.messageId
@@ -182,8 +183,13 @@ const App = ({
                   alignItems: "center",
                   cursor: "pointer"
                 }}
+                onClick={() => {
+                  if (editingNote.translation.trim()) {
+                    addNote(editingNote);
+                  }
+                }}
               >
-                <div>✔</div>
+                ✔
               </div>
               <div
                 style={{
@@ -219,7 +225,16 @@ const App = ({
               left: i % 2 === 1 ? "20%" : 0,
               cursor: "pointer"
             }}
-            onClick={() => editNote({ ...m })}
+            onClick={() =>
+              editNote({
+                id: randomId(),
+                messageId: m.id,
+                text: m.text,
+                translation: "",
+                textAudio: "",
+                translationAudio: ""
+              })
+            }
           >
             {m.text}
           </div>

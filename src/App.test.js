@@ -62,6 +62,7 @@ it("adds a note to a message", () => {
       })
     )
   ).toEqual({
+    editingNote: null,
     messages: [
       { id: "1", text: "hi", notes: [] },
       {

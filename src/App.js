@@ -286,14 +286,16 @@ const App = ({
                         top: 10,
                         right: 15,
                         fontSize: 25,
-                        userSelect: "none"
+                        userSelect: "none",
+                        cursor: "pointer"
                       }
                     : {
                         position: "absolute",
                         top: -20,
                         right: 10,
                         fontSize: 50,
-                        userSelect: "none"
+                        userSelect: "none",
+                        cursor: "pointer"
                       }
                 }
                 onClick={e => {

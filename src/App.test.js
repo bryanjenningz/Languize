@@ -8,7 +8,8 @@ import App, {
   changeText,
   addMessage,
   addNote,
-  editNote
+  editNote,
+  cancelNote
 } from "./App";
 
 it("renders without crashing", () => {
@@ -105,5 +106,11 @@ it("edits a note for a message id", () => {
       textAudio: "hey.mp3",
       translationAudio: "你好！.mp3"
     }
+  });
+});
+
+it("cancels editing the note", () => {
+  expect(reducer({ editingNote: {} }, cancelNote())).toEqual({
+    editingNote: null
   });
 });

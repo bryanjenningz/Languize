@@ -44,6 +44,8 @@ export const reducer = (state = initialState, action = {}) => {
       };
     case "EDIT_NOTE":
       return { ...state, editingNote: action.note };
+    case "CANCEL_NOTE":
+      return { ...state, editingNote: null };
     default:
       return state;
   }
@@ -73,6 +75,7 @@ export const editNote = ({
   type: "EDIT_NOTE",
   note: { id, messageId, text, translation, textAudio, translationAudio }
 });
+export const cancelNote = () => ({ type: "CANCEL_NOTE" });
 
 const randomId = () => String(Math.random()).slice(2);
 
@@ -83,7 +86,8 @@ const App = ({
   changeText,
   addMessage,
   editNote,
-  addNote
+  addNote,
+  cancelNote
 }) => (
   <div
     style={{
@@ -110,8 +114,10 @@ const App = ({
             position: "absolute",
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.7)"
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            zIndex: 1
           }}
+          onClick={cancelNote}
         />
         <div
           style={{
@@ -128,11 +134,13 @@ const App = ({
               width: 400,
               height: 270,
               backgroundColor: "#eee",
-              paddingTop: 25
+              paddingTop: 25,
+              zIndex: 2
             }}
           >
             <textarea
               value={editingNote.text}
+              onChange={e => editNote({ ...editingNote, text: e.target.value })}
               placeholder="Enter text"
               style={{
                 width: "80%",
@@ -144,6 +152,9 @@ const App = ({
             />
             <textarea
               value={editingNote.translation}
+              onChange={e =>
+                editNote({ ...editingNote, translation: e.target.value })
+              }
               placeholder="Enter translation"
               style={{
                 width: "80%",
@@ -184,6 +195,7 @@ const App = ({
                   alignItems: "center",
                   cursor: "pointer"
                 }}
+                onClick={cancelNote}
               >
                 ✖
               </div>
@@ -257,6 +269,6 @@ const mapState = ({ text, messages, editingNote }) => ({
   messages,
   editingNote
 });
-const mapDispatch = { changeText, addMessage, editNote, addNote };
+const mapDispatch = { changeText, addMessage, editNote, addNote, cancelNote };
 
 export default connect(mapState, mapDispatch)(App);

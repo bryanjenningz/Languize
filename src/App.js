@@ -53,7 +53,11 @@ export const reducer = (state = initialState, action = {}) => {
       return {
         ...state,
         text: "",
-        messages: state.messages.concat({ id: action.id, text: action.text })
+        messages: state.messages.concat({
+          id: action.id,
+          text: action.text,
+          notes: []
+        })
       };
     case "ADD_NOTE":
       return {

@@ -35,12 +35,15 @@ it("changes text", () => {
 it("adds message to end of messages", () => {
   expect(
     reducer(
-      { messages: [{ id: "122", text: "hi" }] },
+      { messages: [{ id: "122", text: "hi", notes: [] }] },
       addMessage("123", "hello")
     )
   ).toEqual({
     text: "",
-    messages: [{ id: "122", text: "hi" }, { id: "123", text: "hello" }]
+    messages: [
+      { id: "122", text: "hi", notes: [] },
+      { id: "123", text: "hello", notes: [] }
+    ]
   });
 });
 

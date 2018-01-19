@@ -76,7 +76,15 @@ export const editNote = ({
 
 const randomId = () => String(Math.random()).slice(2);
 
-const App = ({ text, messages, changeText, addMessage }) => (
+const App = ({
+  text,
+  messages,
+  editingNote,
+  changeText,
+  addMessage,
+  editNote,
+  addNote
+}) => (
   <div
     style={{
       textAlign: "center",
@@ -86,6 +94,104 @@ const App = ({ text, messages, changeText, addMessage }) => (
       padding: 10
     }}
   >
+    {editingNote ? (
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: 1
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.7)"
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <div
+            style={{
+              width: 400,
+              height: 270,
+              backgroundColor: "#eee",
+              paddingTop: 25
+            }}
+          >
+            <textarea
+              value={editingNote.text}
+              placeholder="Enter text"
+              style={{
+                width: "80%",
+                height: 70,
+                fontSize: 15,
+                marginBottom: 10,
+                border: 0
+              }}
+            />
+            <textarea
+              value={editingNote.translation}
+              placeholder="Enter translation"
+              style={{
+                width: "80%",
+                height: 70,
+                fontSize: 15,
+                marginBottom: 10,
+                border: 0
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                width: "80%",
+                margin: "0 auto",
+                height: 50
+              }}
+            >
+              <div
+                style={{
+                  flex: 1,
+                  color: "white",
+                  backgroundColor: "#13c713",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer"
+                }}
+              >
+                <div>✔</div>
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  color: "white",
+                  backgroundColor: "#c71334",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer"
+                }}
+              >
+                ✖
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null}
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <div style={{ flex: 9, overflow: "auto" }}>
         {messages.map((m, i) => (
@@ -101,6 +207,7 @@ const App = ({ text, messages, changeText, addMessage }) => (
               left: i % 2 === 1 ? "20%" : 0,
               cursor: "pointer"
             }}
+            onClick={() => editNote({ ...m })}
           >
             {m.text}
           </div>
@@ -145,7 +252,11 @@ const App = ({ text, messages, changeText, addMessage }) => (
   </div>
 );
 
-const mapState = ({ text, messages }) => ({ text, messages });
-const mapDispatch = { changeText, addMessage };
+const mapState = ({ text, messages, editingNote }) => ({
+  text,
+  messages,
+  editingNote
+});
+const mapDispatch = { changeText, addMessage, editNote, addNote };
 
 export default connect(mapState, mapDispatch)(App);

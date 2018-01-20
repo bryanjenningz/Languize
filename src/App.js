@@ -42,7 +42,7 @@ export const initialState = {
     }
   ],
   editingNote: null,
-  expandedMessageId: null,
+  expandedMessage: null,
   recording: false
 };
 
@@ -76,20 +76,40 @@ export const reducer = (state = initialState, action = {}) => {
     case "CANCEL_NOTE":
       return { ...state, editingNote: null };
     case "EXPAND_MESSAGE":
-      return { ...state, expandedMessageId: action.id };
+      return {
+        ...state,
+        expandedMessage: { id: action.id, translationAudio: "" }
+      };
     case "START_RECORDING":
       return { ...state, recording: true };
-    case "REMOVE_RECORDING":
+    case "STOP_RECORDING":
       return {
         ...state,
         recording: false,
-        editingNote: { ...state.editingNote, translationAudio: "" }
+        expandedMessage: {
+          ...state.expandedMessage,
+          translationAudio: action.audio
+        }
       };
     case "SAVE_RECORDING":
       return {
         ...state,
+        messages: state.messages.map(
+          m =>
+            m.id === state.expandedMessage.id
+              ? {
+                  ...m,
+                  notes: [
+                    {
+                      ...m.notes[0],
+                      translationAudio: state.expandedMessage.translationAudio
+                    }
+                  ]
+                }
+              : m
+        ),
         recording: false,
-        editingNote: { ...state.editingNote, translationAudio: action.audio }
+        expandedMessage: null
       };
     default:
       return state;
@@ -123,7 +143,7 @@ export const editNote = ({
 export const cancelNote = () => ({ type: "CANCEL_NOTE" });
 export const expandMessage = id => ({ type: "EXPAND_MESSAGE", id });
 export const startRecording = () => ({ type: "START_RECORDING" });
-export const removeRecording = () => ({ type: "REMOVE_RECORDING" });
+export const stopRecording = audio => ({ type: "STOP_RECORDING", audio });
 export const saveRecording = audio => ({ type: "SAVE_RECORDING", audio });
 
 const randomId = () => String(Math.random()).slice(2);
@@ -132,7 +152,7 @@ const App = ({
   text,
   messages,
   editingNote,
-  expandedMessageId,
+  expandedMessage,
   changeText,
   addMessage,
   editNote,
@@ -317,7 +337,7 @@ const App = ({
             {m.notes.length ? (
               <div
                 style={
-                  m.id === expandedMessageId
+                  expandedMessage && m.id === expandedMessage.id
                     ? {
                         position: "absolute",
                         top: 10,
@@ -337,14 +357,18 @@ const App = ({
                 }
                 onClick={e => {
                   e.stopPropagation();
-                  expandMessage(m.id !== expandedMessageId ? m.id : null);
+                  expandMessage(
+                    expandedMessage && m.id !== expandedMessage.id ? m.id : null
+                  );
                 }}
               >
-                {m.id === expandedMessageId ? "⌃" : "⌄"}
+                {expandedMessage && m.id === expandedMessage.id ? "⌃" : "⌄"}
               </div>
             ) : null}
             {m.text}
-            {m.notes.length && m.id === expandedMessageId ? (
+            {m.notes.length &&
+            expandedMessage &&
+            m.id === expandedMessage.id ? (
               <div>
                 {m.notes.map(n => (
                   <div
@@ -404,11 +428,11 @@ const App = ({
   </div>
 );
 
-const mapState = ({ text, messages, editingNote, expandedMessageId }) => ({
+const mapState = ({ text, messages, editingNote, expandedMessage }) => ({
   text,
   messages,
   editingNote,
-  expandedMessageId
+  expandedMessage
 });
 const mapDispatch = {
   changeText,

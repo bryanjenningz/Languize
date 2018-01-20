@@ -12,7 +12,7 @@ import App, {
   cancelNote,
   expandMessage,
   startRecording,
-  removeRecording,
+  stopRecording,
   saveRecording
 } from "./App";
 
@@ -124,8 +124,50 @@ it("cancels editing the note", () => {
 });
 
 it("sets expanded message id", () => {
-  expect(reducer({ expandedMessageId: null }, expandMessage("123"))).toEqual({
-    expandedMessageId: "123"
+  expect(
+    reducer(
+      {
+        expandedMessage: null,
+        messages: [
+          {
+            id: "messageId",
+            text: "hi",
+            notes: [
+              {
+                id: "noteId",
+                messageId: "messageId",
+                text: "hi",
+                translation: "你好",
+                textAudio: "",
+                translationAudio: "hello.mp3"
+              }
+            ]
+          }
+        ]
+      },
+      expandMessage("messageId")
+    )
+  ).toEqual({
+    expandedMessage: {
+      id: "messageId",
+      translationAudio: ""
+    },
+    messages: [
+      {
+        id: "messageId",
+        text: "hi",
+        notes: [
+          {
+            id: "noteId",
+            messageId: "messageId",
+            text: "hi",
+            translation: "你好",
+            textAudio: "",
+            translationAudio: "hello.mp3"
+          }
+        ]
+      }
+    ]
   });
 });
 
@@ -135,23 +177,61 @@ it("sets recording state to true when recording", () => {
   });
 });
 
-it("removes recording", () => {
+it("stops recording", () => {
   expect(
     reducer(
-      { recording: true, editingNote: { translationAudio: "fdasfdas" } },
-      removeRecording()
+      { recording: true, expandedMessage: { id: "123", translationAudio: "" } },
+      stopRecording("blah.mp3")
     )
-  ).toEqual({ recording: false, editingNote: { translationAudio: "" } });
+  ).toEqual({
+    recording: false,
+    expandedMessage: { id: "123", translationAudio: "blah.mp3" }
+  });
 });
 
-it("stops recording and saves recording to the current note's translationAudio", () => {
+it("saves recording to message note", () => {
   expect(
     reducer(
-      { recording: true, editingNote: { translationAudio: "" } },
+      {
+        recording: false,
+        expandedMessage: { id: "messageId", translationAudio: "hello.mp3" },
+        messages: [
+          {
+            id: "messageId",
+            text: "hi",
+            notes: [
+              {
+                id: "noteId",
+                messageId: "messageId",
+                text: "hi",
+                translation: "你好",
+                textAudio: "",
+                translationAudio: ""
+              }
+            ]
+          }
+        ]
+      },
       saveRecording("blah.mp3")
     )
   ).toEqual({
     recording: false,
-    editingNote: { translationAudio: "blah.mp3" }
+    expandedMessage: null,
+    messages: [
+      {
+        id: "messageId",
+        text: "hi",
+        notes: [
+          {
+            id: "noteId",
+            messageId: "messageId",
+            text: "hi",
+            translation: "你好",
+            textAudio: "",
+            translationAudio: "hello.mp3"
+          }
+        ]
+      }
+    ]
   });
 });

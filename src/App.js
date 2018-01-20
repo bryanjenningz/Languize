@@ -42,7 +42,8 @@ export const initialState = {
     }
   ],
   editingNote: null,
-  expandedMessageId: null
+  expandedMessageId: null,
+  recording: false
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -76,6 +77,20 @@ export const reducer = (state = initialState, action = {}) => {
       return { ...state, editingNote: null };
     case "EXPAND_MESSAGE":
       return { ...state, expandedMessageId: action.id };
+    case "START_RECORDING":
+      return { ...state, recording: true };
+    case "REMOVE_RECORDING":
+      return {
+        ...state,
+        recording: false,
+        editingNote: { ...state.editingNote, translationAudio: "" }
+      };
+    case "SAVE_RECORDING":
+      return {
+        ...state,
+        recording: false,
+        editingNote: { ...state.editingNote, translationAudio: action.audio }
+      };
     default:
       return state;
   }
@@ -107,6 +122,9 @@ export const editNote = ({
 });
 export const cancelNote = () => ({ type: "CANCEL_NOTE" });
 export const expandMessage = id => ({ type: "EXPAND_MESSAGE", id });
+export const startRecording = () => ({ type: "START_RECORDING" });
+export const removeRecording = () => ({ type: "REMOVE_RECORDING" });
+export const saveRecording = audio => ({ type: "SAVE_RECORDING", audio });
 
 const randomId = () => String(Math.random()).slice(2);
 

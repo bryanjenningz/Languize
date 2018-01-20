@@ -10,7 +10,10 @@ import App, {
   addNote,
   editNote,
   cancelNote,
-  expandMessage
+  expandMessage,
+  startRecording,
+  removeRecording,
+  saveRecording
 } from "./App";
 
 it("renders without crashing", () => {
@@ -123,5 +126,32 @@ it("cancels editing the note", () => {
 it("sets expanded message id", () => {
   expect(reducer({ expandedMessageId: null }, expandMessage("123"))).toEqual({
     expandedMessageId: "123"
+  });
+});
+
+it("sets recording state to true when recording", () => {
+  expect(reducer({ recording: false }, startRecording())).toEqual({
+    recording: true
+  });
+});
+
+it("removes recording", () => {
+  expect(
+    reducer(
+      { recording: true, editingNote: { translationAudio: "fdasfdas" } },
+      removeRecording()
+    )
+  ).toEqual({ recording: false, editingNote: { translationAudio: "" } });
+});
+
+it("stops recording and saves recording to the current note's translationAudio", () => {
+  expect(
+    reducer(
+      { recording: true, editingNote: { translationAudio: "" } },
+      saveRecording("blah.mp3")
+    )
+  ).toEqual({
+    recording: false,
+    editingNote: { translationAudio: "blah.mp3" }
   });
 });

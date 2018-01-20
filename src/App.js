@@ -358,7 +358,9 @@ const App = ({
                 onClick={e => {
                   e.stopPropagation();
                   expandMessage(
-                    expandedMessage && m.id !== expandedMessage.id ? m.id : null
+                    !expandedMessage || m.id !== expandedMessage.id
+                      ? m.id
+                      : null
                   );
                 }}
               >

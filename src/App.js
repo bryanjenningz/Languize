@@ -162,17 +162,27 @@ export const reducer: (State, Action) => State = (
     case "OPEN_RECORDER":
       return {
         ...state,
-        audioRecording: { type: "WAITING_TO_RECORD", messageID: action.messageID }
+        audioRecording: {
+          type: "WAITING_TO_RECORD",
+          messageID: action.messageID
+        }
       };
     case "START_RECORDING":
       return {
         ...state,
-        audioRecording: { type: "RECORDING", messageID: state.audioRecording.messageID }
+        audioRecording: {
+          type: "RECORDING",
+          messageID: state.audioRecording.messageID
+        }
       };
     case "STOP_RECORDING":
       return {
         ...state,
-        audioRecording: { type: "DONE_RECORDING", recording: action.recording, messageID: state.audioRecording.messageID }
+        audioRecording: {
+          type: "DONE_RECORDING",
+          recording: action.recording,
+          messageID: state.audioRecording.messageID
+        }
       };
     case "SAVE_RECORDING":
       return {
@@ -399,6 +409,79 @@ const App: AppProps => React$Element<*> = ({
         </div>
       </div>
     ) : null}
+    {audioRecording ? (
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            zIndex: 1
+          }}
+        />
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center"
+          }}
+        >
+          <div
+            style={{
+              height: 250,
+              width: "100vw",
+              zIndex: 2
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 680,
+                height: "100%",
+                backgroundColor: "white",
+                margin: "0 auto",
+                padding: 20
+              }}
+            >
+              <div
+                style={{
+                  width: "100%",
+                  height: 50,
+                  fontSize: 20,
+                  backgroundColor:
+                    audioRecording.type === "RECORDING" ? "#c71334" : "#13c713",
+                  color: "white",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  if (audioRecording.type === "RECORDING") {
+                    stopRecording("blah.mp3");
+                  } else {
+                    startRecording();
+                  }
+                }}
+              >
+                {audioRecording.type === "RECORDING" ? "Stop" : "Record"}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null}
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <div style={{ flex: 9, overflow: "auto" }}>
         {messages.map((m, i) => (
@@ -449,7 +532,9 @@ const App: AppProps => React$Element<*> = ({
                 }
               }}
             >
-              🔊
+              <span role="img" aria-label="record-audio">
+                🔊
+              </span>
             </div>
             {m.translation ? (
               <div

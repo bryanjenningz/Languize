@@ -99,7 +99,10 @@ it("opens recorder", () => {
 
 it("starts recording", () => {
   expect(
-    reducer({ audioRecording: { type: "WAITING_TO_RECORD", messageID: "123" } }, startRecording())
+    reducer(
+      { audioRecording: { type: "WAITING_TO_RECORD", messageID: "123" } },
+      startRecording()
+    )
   ).toEqual({ audioRecording: { type: "RECORDING", messageID: "123" } });
 });
 
@@ -110,7 +113,11 @@ it("stops recording", () => {
       stopRecording("blah.mp3")
     )
   ).toEqual({
-    audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3", messageID: "123" }
+    audioRecording: {
+      type: "DONE_RECORDING",
+      recording: "blah.mp3",
+      messageID: "123"
+    }
   });
 });
 
@@ -118,7 +125,11 @@ it("saves recording", () => {
   expect(
     reducer(
       {
-        audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3", messageID: "123" },
+        audioRecording: {
+          type: "DONE_RECORDING",
+          recording: "blah.mp3",
+          messageID: "123"
+        },
         messages: [
           {
             id: "123",

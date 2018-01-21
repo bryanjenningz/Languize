@@ -2,6 +2,37 @@
 import React from "react";
 import { connect } from "react-redux";
 
+const recordAudio = () =>
+  new Promise(async resolve => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mediaRecorder = new MediaRecorder(stream);
+    const audioChunks = [];
+
+    mediaRecorder.addEventListener("dataavailable", event => {
+      audioChunks.push(event.data);
+    });
+
+    const stop = () =>
+      new Promise(resolve => {
+        mediaRecorder.addEventListener("stop", () => {
+          const audioBlob = new Blob(audioChunks);
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+          const play = () => audio.play();
+          resolve({ audioBlob, audioUrl, play });
+        });
+
+        mediaRecorder.stop();
+      });
+
+    const start = () => {
+      mediaRecorder.start();
+      return stop;
+    };
+
+    resolve(start);
+  });
+
 type ID = string;
 
 type Audio = string;
@@ -470,12 +501,16 @@ const App: AppProps => React$Element<*> = ({
                   cursor: "pointer",
                   marginBottom: 20
                 }}
-                onClick={e => {
+                onClick={async e => {
                   e.stopPropagation();
                   if (audioRecording.type === "RECORDING") {
-                    stopRecording("blah.mp3");
+                    const {
+                      audioUrl
+                    } = await audioRecording.recordingPromise();
+                    stopRecording(audioUrl);
                   } else {
-                    startRecording();
+                    const start = await recordAudio();
+                    startRecording(start());
                   }
                 }}
               >
@@ -498,6 +533,7 @@ const App: AppProps => React$Element<*> = ({
                 }}
                 onClick={e => {
                   e.stopPropagation();
+                  new Audio(audioRecording.recording).play();
                 }}
               >
                 PLAY AUDIO

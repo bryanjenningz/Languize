@@ -558,6 +558,9 @@ const App: AppProps => React$Element<*> = ({
                 }}
                 onClick={e => {
                   e.stopPropagation();
+                  if (audioRecording.type === "DONE_RECORDING") {
+                    saveRecording();
+                  }
                 }}
               >
                 SAVE

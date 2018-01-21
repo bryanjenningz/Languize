@@ -346,7 +346,7 @@ const App: AppProps => React$Element<*> = ({
               }}
               onClick={() => {
                 editMessage({
-                  id: randomId(),
+                  id: m.id,
                   text: m.text,
                   audio: m.audio,
                   translation: m.translation

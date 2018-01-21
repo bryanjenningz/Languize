@@ -462,6 +462,12 @@ const App: AppProps => React$Element<*> = ({
             backgroundColor: "rgba(0, 0, 0, 0.7)",
             zIndex: 1
           }}
+          onClick={e => {
+            e.stopPropagation();
+            if (e.currentTarget === e.target) {
+              closeRecorder();
+            }
+          }}
         />
         <div
           style={{
@@ -476,6 +482,12 @@ const App: AppProps => React$Element<*> = ({
               height: 230,
               width: "100vw",
               zIndex: 2
+            }}
+            onClick={e => {
+              e.stopPropagation();
+              if (e.currentTarget === e.target) {
+                closeRecorder();
+              }
             }}
           >
             <div

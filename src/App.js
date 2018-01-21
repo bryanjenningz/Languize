@@ -39,7 +39,7 @@ type Action =
   | {| type: "SAVE_MESSAGE", message: Message |}
   | {| type: "STOP_EDITING_MESSAGE" |}
   | {| type: "OPEN_RECORDER", messageID: ID |}
-  | {| type: "START_RECORDING" |}
+  | {| type: "START_RECORDING", recordingPromise: Promise |}
   | {| type: "STOP_RECODRING", recording: Audio |}
   | {| type: "SAVE_RECORDING" |}
   | {| type: "CLOSE_RECORDING" |};
@@ -71,8 +71,9 @@ export const openRecorder: ID => Action = messageID => ({
   type: "OPEN_RECORDER",
   messageID
 });
-export const startRecording: () => Action = () => ({
-  type: "START_RECORDING"
+export const startRecording: Promise => Action = recordingPromise => ({
+  type: "START_RECORDING",
+  recordingPromise
 });
 export const stopRecording: Audio => Action = recording => ({
   type: "STOP_RECORDING",
@@ -172,7 +173,8 @@ export const reducer: (State, Action) => State = (
         ...state,
         audioRecording: {
           type: "RECORDING",
-          messageID: state.audioRecording.messageID
+          messageID: state.audioRecording.messageID,
+          recordingPromise: action.recordingPromise
         }
       };
     case "STOP_RECORDING":
@@ -221,7 +223,7 @@ type ActionCreators = {
   saveMessage: Message => Action,
   stopEditingMessage: () => Action,
   openRecorder: ID => Action,
-  startRecording: () => Action,
+  startRecording: Promise => Action,
   stopRecording: Audio => Action,
   saveRecording: () => Action,
   closeRecorder: () => Action

@@ -98,12 +98,19 @@ it("opens recorder", () => {
 });
 
 it("starts recording", () => {
+  const promise = Promise.resolve("recording stuff");
   expect(
     reducer(
       { audioRecording: { type: "WAITING_TO_RECORD", messageID: "123" } },
-      startRecording()
+      startRecording(promise)
     )
-  ).toEqual({ audioRecording: { type: "RECORDING", messageID: "123" } });
+  ).toEqual({
+    audioRecording: {
+      type: "RECORDING",
+      messageID: "123",
+      recordingPromise: promise
+    }
+  });
 });
 
 it("stops recording", () => {

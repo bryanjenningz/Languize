@@ -1,52 +1,103 @@
+// @flow
 import React from "react";
 import { connect } from "react-redux";
 
-export const initialState = {
+type ID = string;
+
+type Audio = string;
+
+type Translation = {
+  text: string,
+  audio: ?Audio
+};
+
+type Message = {
+  id: ID,
+  text: string,
+  audio: ?Audio,
+  translation: ?Translation
+};
+
+type State = {
+  text: string,
+  messages: Message[],
+  selectedMessageID: ?ID,
+  editingMessage: ?Message
+};
+
+type Action =
+  | {| type: "CHANGE_TEXT", text: string |}
+  | {| type: "ADD_MESSAGE", message: Message |}
+  | {| type: "SELECT_MESSAGE", messageID: ?ID |}
+  | {| type: "EDIT_MESSAGE", message: Message |}
+  | {| type: "SAVE_MESSAGE", message: Message |}
+  | {| type: "STOP_EDITING_MESSAGE" |};
+
+export const changeText: string => Action = text => ({
+  type: "CHANGE_TEXT",
+  text
+});
+export const addMessage: Message => Action = message => ({
+  type: "ADD_MESSAGE",
+  message
+});
+export const selectMessage: (?ID) => Action = messageID => ({
+  type: "SELECT_MESSAGE",
+  messageID
+});
+export const editMessage: Message => Action = message => ({
+  type: "EDIT_MESSAGE",
+  message
+});
+export const saveMessage: Message => Action = message => ({
+  type: "SAVE_MESSAGE",
+  message
+});
+export const stopEditingMessage: () => Action = () => ({
+  type: "STOP_EDITING_MESSAGE"
+});
+
+export const initialState: State = {
   text: "",
   messages: [
-    { id: "1", text: "Hello", notes: [] },
+    { id: "1", text: "Hello", audio: null, translation: null },
     {
       id: "2",
       text: "你好",
-      notes: [
-        {
-          id: "n2-1",
-          messageId: "2",
-          text: "你好",
-          translation: "hello",
-          textAudio: "",
-          translationAudio: ""
-        }
-      ]
+      audio: null,
+      translation: { text: "hello", audio: null }
     },
     {
       id: "3",
       text:
         "Hi, how are you doing? I'm doing pretty well. I'm glad we get to talk on this app. It's so cool!",
-      notes: []
+      audio: null,
+      translation: null
     },
-    { id: "4", text: "不错，我也很高兴认识你！", notes: [] },
+    {
+      id: "4",
+      text: "不错，我也很高兴认识你！",
+      audio: null,
+      translation: null
+    },
     {
       id: "5",
       text: "Your Chinese is soooooo gooood! How did you learn?",
-      notes: [
-        {
-          id: "n2-1",
-          messageId: "2",
-          text: "Your Chinese is so good! How did you learn it?",
-          translation: "你的中文真棒！你怎么学的？",
-          textAudio: "",
-          translationAudio: ""
-        }
-      ]
+      audio: null,
+      translation: {
+        text: "你的中文真棒！你怎么学的？",
+        audio: null
+      }
     }
   ],
-  editingNote: null,
-  expandedMessage: null,
-  recording: false
+  selectedMessageID: null,
+  editingMessage: null
 };
 
-export const reducer = (state = initialState, action = {}) => {
+export const reducer: (State, Action) => State = (
+  state = initialState,
+  action
+) => {
   switch (action.type) {
     case "CHANGE_TEXT":
       return { ...state, text: action.text };
@@ -54,111 +105,63 @@ export const reducer = (state = initialState, action = {}) => {
       return {
         ...state,
         text: "",
-        messages: state.messages.concat({
-          id: action.id,
-          text: action.text,
-          notes: []
-        })
+        messages: state.messages.concat(action.message)
       };
-    case "ADD_NOTE":
+    case "SELECT_MESSAGE":
       return {
         ...state,
-        editingNote: null,
-        messages: state.messages.map(
-          m =>
-            m.id === action.note.messageId
-              ? { ...m, notes: m.notes.concat(action.note) }
-              : m
-        )
+        selectedMessageID: action.messageID
       };
-    case "EDIT_NOTE":
-      return { ...state, editingNote: action.note };
-    case "CANCEL_NOTE":
-      return { ...state, editingNote: null };
-    case "EXPAND_MESSAGE":
+    case "EDIT_MESSAGE":
       return {
         ...state,
-        expandedMessage: { id: action.id, translationAudio: "" }
+        editingMessage: action.message
       };
-    case "START_RECORDING":
-      return { ...state, recording: true };
-    case "STOP_RECORDING":
-      return {
-        ...state,
-        recording: false,
-        expandedMessage: {
-          ...state.expandedMessage,
-          translationAudio: action.audio
-        }
-      };
-    case "SAVE_RECORDING":
+    case "SAVE_MESSAGE":
       return {
         ...state,
         messages: state.messages.map(
-          m =>
-            m.id === state.expandedMessage.id
-              ? {
-                  ...m,
-                  notes: [
-                    {
-                      ...m.notes[0],
-                      translationAudio: state.expandedMessage.translationAudio
-                    }
-                  ]
-                }
-              : m
+          m => (m.id === action.message.id ? action.message : m)
         ),
-        recording: false,
-        expandedMessage: null
+        editingMessage: null
+      };
+    case "STOP_EDITING_MESSAGE":
+      return {
+        ...state,
+        editingMessage: null
       };
     default:
       return state;
   }
 };
 
-export const changeText = text => ({ type: "CHANGE_TEXT", text });
-export const addMessage = (id, text) => ({ type: "ADD_MESSAGE", id, text });
-export const addNote = ({
-  id,
-  messageId,
-  text,
-  translation,
-  textAudio,
-  translationAudio
-}) => ({
-  type: "ADD_NOTE",
-  note: { id, messageId, text, translation, textAudio, translationAudio }
-});
-export const editNote = ({
-  id,
-  messageId,
-  text,
-  translation,
-  textAudio,
-  translationAudio
-}) => ({
-  type: "EDIT_NOTE",
-  note: { id, messageId, text, translation, textAudio, translationAudio }
-});
-export const cancelNote = () => ({ type: "CANCEL_NOTE" });
-export const expandMessage = id => ({ type: "EXPAND_MESSAGE", id });
-export const startRecording = () => ({ type: "START_RECORDING" });
-export const stopRecording = audio => ({ type: "STOP_RECORDING", audio });
-export const saveRecording = audio => ({ type: "SAVE_RECORDING", audio });
+const randomId: () => string = () => String(Math.random()).slice(2);
 
-const randomId = () => String(Math.random()).slice(2);
+type ActionCreators = {
+  changeText: string => Action,
+  addMessage: Message => Action,
+  selectMessage: ID => Action,
+  editMessage: Message => Action,
+  saveMessage: Message => Action,
+  stopEditingMessage: () => Action
+};
 
-const App = ({
+type AppProps = {|
+  ...State,
+  ...ActionCreators
+|};
+
+const App: AppProps => React$Element<*> = ({
   text,
   messages,
-  editingNote,
-  expandedMessage,
+  selectedMessageID,
+  editingMessage,
   changeText,
   addMessage,
-  editNote,
-  addNote,
-  cancelNote,
-  expandMessage
+  selectMessage,
+  editMessage,
+  saveMessage,
+  stopEditingMessage
 }) => (
   <div
     style={{
@@ -169,7 +172,7 @@ const App = ({
       padding: 10
     }}
   >
-    {editingNote ? (
+    {editingMessage ? (
       <div
         style={{
           position: "absolute",
@@ -190,7 +193,7 @@ const App = ({
           }}
           onClick={e => {
             e.stopPropagation();
-            cancelNote();
+            stopEditingMessage();
           }}
         />
         <div
@@ -212,7 +215,7 @@ const App = ({
             onClick={e => {
               if (e.currentTarget === e.target) {
                 e.stopPropagation();
-                cancelNote();
+                stopEditingMessage();
               }
             }}
           >
@@ -226,10 +229,10 @@ const App = ({
               }}
             >
               <textarea
-                value={editingNote.text}
-                onChange={e =>
-                  editNote({ ...editingNote, text: e.target.value })
-                }
+                value={editingMessage.text}
+                onChange={e => {
+                  editMessage({ ...editingMessage, text: e.target.value });
+                }}
                 placeholder="Enter text"
                 style={{
                   width: "80%",
@@ -240,10 +243,25 @@ const App = ({
                 }}
               />
               <textarea
-                value={editingNote.translation}
-                onChange={e =>
-                  editNote({ ...editingNote, translation: e.target.value })
+                value={
+                  editingMessage.translation
+                    ? editingMessage.translation.text
+                    : ""
                 }
+                onChange={e => {
+                  if (editingMessage) {
+                    editMessage({
+                      ...editingMessage,
+                      translation: {
+                        ...(editingMessage.translation || {
+                          text: "",
+                          audio: null
+                        }),
+                        text: e.target.value
+                      }
+                    });
+                  }
+                }}
                 placeholder="Enter translation"
                 style={{
                   width: "80%",
@@ -272,8 +290,13 @@ const App = ({
                     cursor: "pointer"
                   }}
                   onClick={() => {
-                    if (editingNote.translation.trim()) {
-                      addNote(editingNote);
+                    if (
+                      editingMessage &&
+                      editingMessage.text.trim() &&
+                      (!editingMessage.translation ||
+                        editingMessage.translation.text.trim())
+                    ) {
+                      saveMessage(editingMessage);
                     }
                   }}
                 >
@@ -289,7 +312,7 @@ const App = ({
                     alignItems: "center",
                     cursor: "pointer"
                   }}
-                  onClick={cancelNote}
+                  onClick={stopEditingMessage}
                 >
                   ✖
                 </div>
@@ -321,23 +344,23 @@ const App = ({
                 left: 15,
                 cursor: "pointer"
               }}
-              onClick={() =>
-                editNote({
+              onClick={() => {
+                editMessage({
                   id: randomId(),
-                  messageId: m.id,
                   text: m.text,
-                  translation: "",
-                  textAudio: "",
-                  translationAudio: ""
-                })
-              }
+                  audio: m.audio,
+                  translation: m.translation
+                    ? { text: m.translation.text, audio: m.translation.audio }
+                    : null
+                });
+              }}
             >
               ✎
             </div>
-            {m.notes.length ? (
+            {m.translation ? (
               <div
                 style={
-                  expandedMessage && m.id === expandedMessage.id
+                  m.id === selectedMessageID
                     ? {
                         position: "absolute",
                         top: 10,
@@ -357,35 +380,26 @@ const App = ({
                 }
                 onClick={e => {
                   e.stopPropagation();
-                  expandMessage(
-                    !expandedMessage || m.id !== expandedMessage.id
-                      ? m.id
-                      : null
-                  );
+                  selectMessage(m.id === selectedMessageID ? null : m.id);
                 }}
               >
-                {expandedMessage && m.id === expandedMessage.id ? "⌃" : "⌄"}
+                {m.id === selectedMessageID ? "⌃" : "⌄"}
               </div>
             ) : null}
             {m.text}
-            {m.notes.length &&
-            expandedMessage &&
-            m.id === expandedMessage.id ? (
+            {m.translation && m.id === selectedMessageID ? (
               <div>
-                {m.notes.map(n => (
-                  <div
-                    key={n.id}
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      borderTop: "1px solid #aaa",
-                      marginTop: 10,
-                      paddingTop: 10
-                    }}
-                  >
-                    <div>{n.translation}</div>
-                  </div>
-                ))}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    borderTop: "1px solid #aaa",
+                    marginTop: 10,
+                    paddingTop: 10
+                  }}
+                >
+                  <div>{m.translation.text}</div>
+                </div>
               </div>
             ) : null}
           </div>
@@ -411,7 +425,9 @@ const App = ({
           }}
         />
         <div
-          onClick={() => addMessage(randomId(), text)}
+          onClick={() =>
+            addMessage({ id: randomId(), text, audio: null, translation: null })
+          }
           style={{
             width: "20%",
             fontSize: 20,
@@ -430,19 +446,15 @@ const App = ({
   </div>
 );
 
-const mapState = ({ text, messages, editingNote, expandedMessage }) => ({
-  text,
-  messages,
-  editingNote,
-  expandedMessage
-});
-const mapDispatch = {
+const mapState: State => State = state => state;
+
+const mapDispatch: ActionCreators = {
   changeText,
   addMessage,
-  editNote,
-  addNote,
-  cancelNote,
-  expandMessage
+  selectMessage,
+  editMessage,
+  saveMessage,
+  stopEditingMessage
 };
 
 export default connect(mapState, mapDispatch)(App);

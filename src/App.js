@@ -38,10 +38,10 @@ type Action =
   | {| type: "EDIT_MESSAGE", message: Message |}
   | {| type: "SAVE_MESSAGE", message: Message |}
   | {| type: "STOP_EDITING_MESSAGE" |}
-  | {| type: "OPEN_RECORDER" |}
+  | {| type: "OPEN_RECORDER", messageID: ID |}
   | {| type: "START_RECORDING" |}
-  | {| type: "STOP_RECODRING" |}
-  | {| type: "SAVE_RECORDING", recording: Audio |}
+  | {| type: "STOP_RECODRING", recording: Audio |}
+  | {| type: "SAVE_RECORDING" |}
   | {| type: "CLOSE_RECORDING" |};
 
 export const changeText: string => Action = text => ({
@@ -67,8 +67,9 @@ export const saveMessage: Message => Action = message => ({
 export const stopEditingMessage: () => Action = () => ({
   type: "STOP_EDITING_MESSAGE"
 });
-export const openRecorder: () => Action = () => ({
-  type: "OPEN_RECORDER"
+export const openRecorder: ID => Action = messageID => ({
+  type: "OPEN_RECORDER",
+  messageID
 });
 export const startRecording: () => Action = () => ({
   type: "START_RECORDING"
@@ -77,10 +78,8 @@ export const stopRecording: Audio => Action = recording => ({
   type: "STOP_RECORDING",
   recording
 });
-export const saveRecording: (Audio, ID) => Action = (recording, messageID) => ({
-  type: "SAVE_RECORDING",
-  recording,
-  messageID
+export const saveRecording: () => Action = () => ({
+  type: "SAVE_RECORDING"
 });
 export const closeRecorder: () => Action = () => ({
   type: "CLOSE_RECORDER"
@@ -120,7 +119,8 @@ export const initialState: State = {
     }
   ],
   selectedMessageID: null,
-  editingMessage: null
+  editingMessage: null,
+  audioRecording: null
 };
 
 export const reducer: (State, Action) => State = (
@@ -162,29 +162,29 @@ export const reducer: (State, Action) => State = (
     case "OPEN_RECORDER":
       return {
         ...state,
-        audioRecording: { type: "WAITING_TO_RECORD" }
+        audioRecording: { type: "WAITING_TO_RECORD", messageID: action.messageID }
       };
     case "START_RECORDING":
       return {
         ...state,
-        audioRecording: { type: "RECORDING" }
+        audioRecording: { type: "RECORDING", messageID: state.audioRecording.messageID }
       };
     case "STOP_RECORDING":
       return {
         ...state,
-        audioRecording: { type: "DONE_RECORDING", recording: action.recording }
+        audioRecording: { type: "DONE_RECORDING", recording: action.recording, messageID: state.audioRecording.messageID }
       };
     case "SAVE_RECORDING":
       return {
         ...state,
         messages: state.messages.map(
           m =>
-            m.id === action.messageID
+            m.id === state.audioRecording.messageID
               ? {
                   ...m,
                   translation: {
                     ...(m.translation || { text: "" }),
-                    audio: action.recording
+                    audio: state.audioRecording.recording
                   }
                 }
               : m
@@ -209,7 +209,12 @@ type ActionCreators = {
   selectMessage: ID => Action,
   editMessage: Message => Action,
   saveMessage: Message => Action,
-  stopEditingMessage: () => Action
+  stopEditingMessage: () => Action,
+  openRecorder: ID => Action,
+  startRecording: () => Action,
+  stopRecording: Audio => Action,
+  saveRecording: () => Action,
+  closeRecorder: () => Action
 };
 
 type AppProps = {|
@@ -222,12 +227,18 @@ const App: AppProps => React$Element<*> = ({
   messages,
   selectedMessageID,
   editingMessage,
+  audioRecording,
   changeText,
   addMessage,
   selectMessage,
   editMessage,
   saveMessage,
-  stopEditingMessage
+  stopEditingMessage,
+  openRecorder,
+  startRecording,
+  stopRecording,
+  saveRecording,
+  closeRecorder
 }) => (
   <div
     style={{
@@ -423,6 +434,23 @@ const App: AppProps => React$Element<*> = ({
             >
               ✎
             </div>
+            <div
+              style={{
+                position: "absolute",
+                left: 15,
+                bottom: 15,
+                cursor: "pointer"
+              }}
+              onClick={() => {
+                if (m.translation && m.translation.audio) {
+                  new Audio(m.translation.audio).play();
+                } else {
+                  openRecorder(m.id);
+                }
+              }}
+            >
+              🔊
+            </div>
             {m.translation ? (
               <div
                 style={
@@ -520,7 +548,12 @@ const mapDispatch: ActionCreators = {
   selectMessage,
   editMessage,
   saveMessage,
-  stopEditingMessage
+  stopEditingMessage,
+  openRecorder,
+  startRecording,
+  stopRecording,
+  saveRecording,
+  closeRecorder
 };
 
 export default connect(mapState, mapDispatch)(App);

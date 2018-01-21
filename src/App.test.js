@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
 import App, {
-  initialState,
   reducer,
   changeText,
   addMessage,
@@ -93,27 +92,25 @@ it("stops editing message", () => {
 });
 
 it("opens recorder", () => {
-  expect(reducer({ audioRecording: null }, openRecorder())).toEqual({
-    audioRecording: { type: "WAITING_TO_RECORD" }
+  expect(reducer({ audioRecording: null }, openRecorder("123"))).toEqual({
+    audioRecording: { type: "WAITING_TO_RECORD", messageID: "123" }
   });
 });
 
 it("starts recording", () => {
   expect(
-    reducer({ audioRecording: { type: "WAITING_TO_RECORD" } }, startRecording())
-  ).toEqual({ audioRecording: { type: "RECORDING" } });
+    reducer({ audioRecording: { type: "WAITING_TO_RECORD", messageID: "123" } }, startRecording())
+  ).toEqual({ audioRecording: { type: "RECORDING", messageID: "123" } });
 });
-
-openRecorder, startRecording, stopRecording, saveRecording, closeRecorder;
 
 it("stops recording", () => {
   expect(
     reducer(
-      { audioRecording: { type: "RECORDING" } },
+      { audioRecording: { type: "RECORDING", messageID: "123" } },
       stopRecording("blah.mp3")
     )
   ).toEqual({
-    audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3" }
+    audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3", messageID: "123" }
   });
 });
 
@@ -121,7 +118,7 @@ it("saves recording", () => {
   expect(
     reducer(
       {
-        audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3" },
+        audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3", messageID: "123" },
         messages: [
           {
             id: "123",
@@ -131,7 +128,7 @@ it("saves recording", () => {
           }
         ]
       },
-      saveRecording("blah.mp3", "123")
+      saveRecording()
     )
   ).toEqual({
     audioRecording: null,

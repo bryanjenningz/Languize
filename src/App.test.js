@@ -7,13 +7,10 @@ import App, {
   reducer,
   changeText,
   addMessage,
-  addNote,
-  editNote,
-  cancelNote,
-  expandMessage,
-  startRecording,
-  stopRecording,
-  saveRecording
+  selectMessage,
+  editMessage,
+  saveMessage,
+  stopEditingMessage
 } from "./App";
 
 it("renders without crashing", () => {
@@ -27,10 +24,6 @@ it("renders without crashing", () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
-it("returns correct initial state", () => {
-  expect(reducer()).toEqual(initialState);
-});
-
 it("changes text", () => {
   expect(reducer({ text: "" }, changeText("hello"))).toEqual({ text: "hello" });
 });
@@ -38,200 +31,58 @@ it("changes text", () => {
 it("adds message to end of messages", () => {
   expect(
     reducer(
-      { messages: [{ id: "122", text: "hi", notes: [] }] },
-      addMessage("123", "hello")
+      { messages: [] },
+      addMessage({ id: "122", text: "hi", audio: null, translation: null })
     )
   ).toEqual({
     text: "",
-    messages: [
-      { id: "122", text: "hi", notes: [] },
-      { id: "123", text: "hello", notes: [] }
-    ]
+    messages: [{ id: "122", text: "hi", audio: null, translation: null }]
   });
 });
 
-it("adds a note to a message", () => {
+it("selects message", () => {
+  expect(reducer({ selectedMessageID: null }, selectMessage("123"))).toEqual({
+    selectedMessageID: "123"
+  });
+});
+
+it("edits message", () => {
   expect(
     reducer(
-      {
-        messages: [
-          { id: "1", text: "hi", notes: [] },
-          { id: "23", text: "hello", notes: [] }
-        ]
-      },
-      addNote({
-        id: "1111",
-        messageId: "23",
-        text: "hello",
-        translation: "你好",
-        textAudio: "hello.mp3",
-        translationAudio: "你好.mp3"
+      { editingMessage: null },
+      editMessage({ id: "122", text: "hi", audio: null, translation: null })
+    )
+  ).toEqual({
+    editingMessage: { id: "122", text: "hi", audio: null, translation: null }
+  });
+});
+
+it("saves message", () => {
+  expect(
+    reducer(
+      { messages: [{ id: "122", text: "hi", audio: null, translation: null }] },
+      saveMessage({
+        id: "122",
+        text: "hi",
+        audio: null,
+        translation: { text: "你好", audio: null }
       })
     )
   ).toEqual({
-    editingNote: null,
-    messages: [
-      { id: "1", text: "hi", notes: [] },
-      {
-        id: "23",
-        text: "hello",
-        notes: [
-          {
-            id: "1111",
-            messageId: "23",
-            text: "hello",
-            translation: "你好",
-            textAudio: "hello.mp3",
-            translationAudio: "你好.mp3"
-          }
-        ]
-      }
-    ]
-  });
-});
-
-it("edits a note for a message id", () => {
-  expect(
-    reducer(
-      {
-        editingNote: null
-      },
-      editNote({
-        id: "12",
-        messageId: "23",
-        text: "hey",
-        translation: "你好！",
-        textAudio: "hey.mp3",
-        translationAudio: "你好！.mp3"
-      })
-    )
-  ).toEqual({
-    editingNote: {
-      id: "12",
-      messageId: "23",
-      text: "hey",
-      translation: "你好！",
-      textAudio: "hey.mp3",
-      translationAudio: "你好！.mp3"
-    }
-  });
-});
-
-it("cancels editing the note", () => {
-  expect(reducer({ editingNote: {} }, cancelNote())).toEqual({
-    editingNote: null
-  });
-});
-
-it("sets expanded message id", () => {
-  expect(
-    reducer(
-      {
-        expandedMessage: null,
-        messages: [
-          {
-            id: "messageId",
-            text: "hi",
-            notes: [
-              {
-                id: "noteId",
-                messageId: "messageId",
-                text: "hi",
-                translation: "你好",
-                textAudio: "",
-                translationAudio: "hello.mp3"
-              }
-            ]
-          }
-        ]
-      },
-      expandMessage("messageId")
-    )
-  ).toEqual({
-    expandedMessage: {
-      id: "messageId",
-      translationAudio: ""
-    },
     messages: [
       {
-        id: "messageId",
+        id: "122",
         text: "hi",
-        notes: [
-          {
-            id: "noteId",
-            messageId: "messageId",
-            text: "hi",
-            translation: "你好",
-            textAudio: "",
-            translationAudio: "hello.mp3"
-          }
-        ]
+        audio: null,
+        translation: { text: "你好", audio: null }
       }
-    ]
+    ],
+    editingMessage: null
   });
 });
 
-it("sets recording state to true when recording", () => {
-  expect(reducer({ recording: false }, startRecording())).toEqual({
-    recording: true
-  });
-});
-
-it("stops recording", () => {
-  expect(
-    reducer(
-      { recording: true, expandedMessage: { id: "123", translationAudio: "" } },
-      stopRecording("blah.mp3")
-    )
-  ).toEqual({
-    recording: false,
-    expandedMessage: { id: "123", translationAudio: "blah.mp3" }
-  });
-});
-
-it("saves recording to message note", () => {
-  expect(
-    reducer(
-      {
-        recording: false,
-        expandedMessage: { id: "messageId", translationAudio: "hello.mp3" },
-        messages: [
-          {
-            id: "messageId",
-            text: "hi",
-            notes: [
-              {
-                id: "noteId",
-                messageId: "messageId",
-                text: "hi",
-                translation: "你好",
-                textAudio: "",
-                translationAudio: ""
-              }
-            ]
-          }
-        ]
-      },
-      saveRecording("blah.mp3")
-    )
-  ).toEqual({
-    recording: false,
-    expandedMessage: null,
-    messages: [
-      {
-        id: "messageId",
-        text: "hi",
-        notes: [
-          {
-            id: "noteId",
-            messageId: "messageId",
-            text: "hi",
-            translation: "你好",
-            textAudio: "",
-            translationAudio: "hello.mp3"
-          }
-        ]
-      }
-    ]
+it("stops editing message", () => {
+  expect(reducer({ editingMessage: "123" }, stopEditingMessage())).toEqual({
+    editingMessage: null
   });
 });

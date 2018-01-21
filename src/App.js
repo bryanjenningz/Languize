@@ -440,7 +440,7 @@ const App: AppProps => React$Element<*> = ({
         >
           <div
             style={{
-              height: 250,
+              height: 230,
               width: "100vw",
               zIndex: 2
             }}
@@ -465,9 +465,11 @@ const App: AppProps => React$Element<*> = ({
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  cursor: "pointer"
+                  cursor: "pointer",
+                  marginBottom: 20
                 }}
-                onClick={() => {
+                onClick={e => {
+                  e.stopPropagation();
                   if (audioRecording.type === "RECORDING") {
                     stopRecording("blah.mp3");
                   } else {
@@ -475,7 +477,52 @@ const App: AppProps => React$Element<*> = ({
                   }
                 }}
               >
-                {audioRecording.type === "RECORDING" ? "Stop" : "Record"}
+                {audioRecording.type === "RECORDING" ? "STOP" : "RECORD"}
+              </div>
+              <div
+                style={{
+                  width: "100%",
+                  height: 50,
+                  fontSize: 20,
+                  backgroundColor: "#13c713",
+                  color: "white",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  marginBottom: 20,
+                  visibility:
+                    audioRecording.type === "DONE_RECORDING" ? "" : "hidden"
+                }}
+                onClick={e => {
+                  e.stopPropagation();
+                }}
+              >
+                PLAY AUDIO
+              </div>
+              <div
+                style={{
+                  width: "100%",
+                  height: 50,
+                  fontSize: 20,
+                  backgroundColor:
+                    audioRecording.type === "DONE_RECORDING"
+                      ? "#13c713"
+                      : "#cccccc",
+                  color:
+                    audioRecording.type === "DONE_RECORDING"
+                      ? "white"
+                      : "#888888",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer"
+                }}
+                onClick={e => {
+                  e.stopPropagation();
+                }}
+              >
+                SAVE
               </div>
             </div>
           </div>
@@ -504,7 +551,8 @@ const App: AppProps => React$Element<*> = ({
                 left: 15,
                 cursor: "pointer"
               }}
-              onClick={() => {
+              onClick={e => {
+                e.stopPropagation();
                 editMessage({
                   id: m.id,
                   text: m.text,
@@ -524,7 +572,8 @@ const App: AppProps => React$Element<*> = ({
                 bottom: 15,
                 cursor: "pointer"
               }}
-              onClick={() => {
+              onClick={e => {
+                e.stopPropagation();
                 if (m.translation && m.translation.audio) {
                   new Audio(m.translation.audio).play();
                 } else {

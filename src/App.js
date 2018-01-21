@@ -37,7 +37,12 @@ type Action =
   | {| type: "SELECT_MESSAGE", messageID: ?ID |}
   | {| type: "EDIT_MESSAGE", message: Message |}
   | {| type: "SAVE_MESSAGE", message: Message |}
-  | {| type: "STOP_EDITING_MESSAGE" |};
+  | {| type: "STOP_EDITING_MESSAGE" |}
+  | {| type: "OPEN_RECORDER" |}
+  | {| type: "START_RECORDING" |}
+  | {| type: "STOP_RECODRING" |}
+  | {| type: "SAVE_RECORDING", recording: Audio |}
+  | {| type: "CLOSE_RECORDING" |};
 
 export const changeText: string => Action = text => ({
   type: "CHANGE_TEXT",
@@ -61,6 +66,24 @@ export const saveMessage: Message => Action = message => ({
 });
 export const stopEditingMessage: () => Action = () => ({
   type: "STOP_EDITING_MESSAGE"
+});
+export const openRecorder: () => Action = () => ({
+  type: "OPEN_RECORDER"
+});
+export const startRecording: () => Action = () => ({
+  type: "START_RECORDING"
+});
+export const stopRecording: Audio => Action = recording => ({
+  type: "STOP_RECORDING",
+  recording
+});
+export const saveRecording: (Audio, ID) => Action = (recording, messageID) => ({
+  type: "SAVE_RECORDING",
+  recording,
+  messageID
+});
+export const closeRecorder: () => Action = () => ({
+  type: "CLOSE_RECORDER"
 });
 
 export const initialState: State = {
@@ -135,6 +158,43 @@ export const reducer: (State, Action) => State = (
       return {
         ...state,
         editingMessage: null
+      };
+    case "OPEN_RECORDER":
+      return {
+        ...state,
+        audioRecording: { type: "WAITING_TO_RECORD" }
+      };
+    case "START_RECORDING":
+      return {
+        ...state,
+        audioRecording: { type: "RECORDING" }
+      };
+    case "STOP_RECORDING":
+      return {
+        ...state,
+        audioRecording: { type: "DONE_RECORDING", recording: action.recording }
+      };
+    case "SAVE_RECORDING":
+      return {
+        ...state,
+        messages: state.messages.map(
+          m =>
+            m.id === action.messageID
+              ? {
+                  ...m,
+                  translation: {
+                    ...(m.translation || { text: "" }),
+                    audio: action.recording
+                  }
+                }
+              : m
+        ),
+        audioRecording: null
+      };
+    case "CLOSE_RECORDER":
+      return {
+        ...state,
+        audioRecording: null
       };
     default:
       return state;

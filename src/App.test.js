@@ -109,7 +109,7 @@ openRecorder, startRecording, stopRecording, saveRecording, closeRecorder;
 it("stops recording", () => {
   expect(
     reducer(
-      { audioRecording: { type: "DONE_RECORDING" } },
+      { audioRecording: { type: "RECORDING" } },
       stopRecording("blah.mp3")
     )
   ).toEqual({

@@ -18,11 +18,17 @@ type Message = {
   translation: ?Translation
 };
 
+type AudioRecording =
+  | { type: "WAITING_TO_RECORD" }
+  | { type: "RECORDING" }
+  | { type: "DONE_RECORDING", recording: Audio };
+
 type State = {
   text: string,
   messages: Message[],
   selectedMessageID: ?ID,
-  editingMessage: ?Message
+  editingMessage: ?Message,
+  audioRecording: ?AudioRecording
 };
 
 type Action =

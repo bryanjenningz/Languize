@@ -10,7 +10,12 @@ import App, {
   selectMessage,
   editMessage,
   saveMessage,
-  stopEditingMessage
+  stopEditingMessage,
+  openRecorder,
+  startRecording,
+  stopRecording,
+  saveRecording,
+  closeRecorder
 } from "./App";
 
 it("renders without crashing", () => {
@@ -84,5 +89,88 @@ it("saves message", () => {
 it("stops editing message", () => {
   expect(reducer({ editingMessage: "123" }, stopEditingMessage())).toEqual({
     editingMessage: null
+  });
+});
+
+it("opens recorder", () => {
+  expect(reducer({ audioRecording: null }, openRecorder())).toEqual({
+    audioRecording: { type: "WAITING_TO_RECORD" }
+  });
+});
+
+it("starts recording", () => {
+  expect(
+    reducer({ audioRecording: { type: "WAITING_TO_RECORD" } }, startRecording())
+  ).toEqual({ audioRecording: { type: "RECORDING" } });
+});
+
+openRecorder, startRecording, stopRecording, saveRecording, closeRecorder;
+
+it("stops recording", () => {
+  expect(
+    reducer(
+      { audioRecording: { type: "DONE_RECORDING" } },
+      stopRecording("blah.mp3")
+    )
+  ).toEqual({
+    audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3" }
+  });
+});
+
+it("saves recording", () => {
+  expect(
+    reducer(
+      {
+        audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3" },
+        messages: [
+          {
+            id: "123",
+            text: "hi",
+            audio: null,
+            translation: { text: "blah", audio: null }
+          }
+        ]
+      },
+      saveRecording("blah.mp3", "123")
+    )
+  ).toEqual({
+    audioRecording: null,
+    messages: [
+      {
+        id: "123",
+        text: "hi",
+        audio: null,
+        translation: { text: "blah", audio: "blah.mp3" }
+      }
+    ]
+  });
+});
+
+it("closes the recorder", () => {
+  expect(
+    reducer(
+      {
+        audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3" },
+        messages: [
+          {
+            id: "123",
+            text: "hi",
+            audio: null,
+            translation: { text: "blah", audio: null }
+          }
+        ]
+      },
+      closeRecorder()
+    )
+  ).toEqual({
+    audioRecording: null,
+    messages: [
+      {
+        id: "123",
+        text: "hi",
+        audio: null,
+        translation: { text: "blah", audio: null }
+      }
+    ]
   });
 });

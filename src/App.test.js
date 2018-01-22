@@ -2,7 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import App, {
+import App from "./App";
+import {
   reducer,
   changeText,
   addMessage,
@@ -13,7 +14,7 @@ import App, {
   cancelEditingMessage,
   startRecording,
   stopRecording
-} from "./App";
+} from "./reducer";
 
 const message = {
   id: "122",

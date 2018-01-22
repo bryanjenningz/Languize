@@ -6,16 +6,22 @@ import App, {
   reducer,
   changeText,
   addMessage,
-  selectMessage,
-  editMessage,
+  startEditingMessage,
+  editText,
+  editTranslation,
   saveMessage,
-  stopEditingMessage,
-  openRecorder,
+  cancelEditingMessage,
   startRecording,
-  stopRecording,
-  saveRecording,
-  closeRecorder
+  stopRecording
 } from "./App";
+
+const message = {
+  id: "122",
+  text: "hi",
+  audio: "",
+  translation: "",
+  translationAudio: ""
+};
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
@@ -33,159 +39,111 @@ it("changes text", () => {
 });
 
 it("adds message to end of messages", () => {
-  expect(
-    reducer(
-      { messages: [] },
-      addMessage({ id: "122", text: "hi", audio: null, translation: null })
-    )
-  ).toEqual({
+  expect(reducer({ messages: [] }, addMessage(message))).toEqual({
     text: "",
-    messages: [{ id: "122", text: "hi", audio: null, translation: null }]
+    messages: [message]
   });
 });
 
-it("selects message", () => {
-  expect(reducer({ selectedMessageID: null }, selectMessage("123"))).toEqual({
-    selectedMessageID: "123"
-  });
-});
-
-it("edits message", () => {
+it("starts editing message", () => {
   expect(
     reducer(
-      { editingMessage: null },
-      editMessage({ id: "122", text: "hi", audio: null, translation: null })
+      { editing: null, messages: [message] },
+      startEditingMessage(message)
+    )
+  ).toEqual({ messages: [message], editing: { message, recording: null } });
+});
+
+it("edits text", () => {
+  expect(
+    reducer({ editing: { message, recording: null } }, editText("helldfasfo"))
+  ).toEqual({
+    editing: { message: { ...message, text: "helldfasfo" }, recording: null }
+  });
+});
+
+it("edits translation", () => {
+  expect(
+    reducer(
+      { editing: { message, recording: null } },
+      editTranslation("helldfasfo")
     )
   ).toEqual({
-    editingMessage: { id: "122", text: "hi", audio: null, translation: null }
+    editing: {
+      message: { ...message, translation: "helldfasfo" },
+      recording: null
+    }
   });
 });
 
 it("saves message", () => {
+  const newMessage = {
+    ...message,
+    text: "aaaaa",
+    translation: "bbbbb",
+    audio: "ccc",
+    translationAudio: "dddd"
+  };
   expect(
     reducer(
-      { messages: [{ id: "122", text: "hi", audio: null, translation: null }] },
-      saveMessage({
-        id: "122",
-        text: "hi",
-        audio: null,
-        translation: { text: "你好", audio: null }
-      })
+      { messages: [message], editing: { message: newMessage } },
+      saveMessage()
     )
   ).toEqual({
     messages: [
       {
-        id: "122",
-        text: "hi",
-        audio: null,
-        translation: { text: "你好", audio: null }
+        ...message,
+        text: "aaaaa",
+        translation: "bbbbb",
+        audio: "ccc",
+        translationAudio: "dddd"
       }
     ],
-    editingMessage: null
+    editing: null
   });
 });
 
-it("stops editing message", () => {
-  expect(reducer({ editingMessage: "123" }, stopEditingMessage())).toEqual({
-    editingMessage: null
-  });
-});
-
-it("opens recorder", () => {
-  expect(reducer({ audioRecording: null }, openRecorder("123"))).toEqual({
-    audioRecording: { type: "WAITING_TO_RECORD", messageID: "123" }
-  });
+it("cancels editing message", () => {
+  expect(
+    reducer({ editing: { message, recording: null } }, cancelEditingMessage())
+  ).toEqual({ editing: null });
 });
 
 it("starts recording", () => {
-  const promise = Promise.resolve("recording stuff");
   expect(
     reducer(
-      { audioRecording: { type: "WAITING_TO_RECORD", messageID: "123" } },
-      startRecording(promise)
+      { editing: { message, recording: null } },
+      startRecording({
+        audioPromise: Promise.resolve("hey"),
+        isTranslation: true
+      })
     )
   ).toEqual({
-    audioRecording: {
-      type: "RECORDING",
-      messageID: "123",
-      recordingPromise: promise
+    editing: {
+      message,
+      recording: { audioPromise: Promise.resolve("hey"), isTranslation: true }
     }
   });
 });
 
-it("stops recording", () => {
+it("stop recording", () => {
   expect(
     reducer(
-      { audioRecording: { type: "RECORDING", messageID: "123" } },
-      stopRecording("blah.mp3")
+      {
+        editing: {
+          message,
+          recording: {
+            audioPromise: Promise.resolve("hey"),
+            isTranslation: true
+          }
+        }
+      },
+      stopRecording("hey.mp3")
     )
   ).toEqual({
-    audioRecording: {
-      type: "DONE_RECORDING",
-      recording: "blah.mp3",
-      messageID: "123"
+    editing: {
+      message: { ...message, translationAudio: "hey.mp3" },
+      recording: null
     }
-  });
-});
-
-it("saves recording", () => {
-  expect(
-    reducer(
-      {
-        audioRecording: {
-          type: "DONE_RECORDING",
-          recording: "blah.mp3",
-          messageID: "123"
-        },
-        messages: [
-          {
-            id: "123",
-            text: "hi",
-            audio: null,
-            translation: { text: "blah", audio: null }
-          }
-        ]
-      },
-      saveRecording()
-    )
-  ).toEqual({
-    audioRecording: null,
-    messages: [
-      {
-        id: "123",
-        text: "hi",
-        audio: null,
-        translation: { text: "blah", audio: "blah.mp3" }
-      }
-    ]
-  });
-});
-
-it("closes the recorder", () => {
-  expect(
-    reducer(
-      {
-        audioRecording: { type: "DONE_RECORDING", recording: "blah.mp3" },
-        messages: [
-          {
-            id: "123",
-            text: "hi",
-            audio: null,
-            translation: { text: "blah", audio: null }
-          }
-        ]
-      },
-      closeRecorder()
-    )
-  ).toEqual({
-    audioRecording: null,
-    messages: [
-      {
-        id: "123",
-        text: "hi",
-        audio: null,
-        translation: { text: "blah", audio: null }
-      }
-    ]
   });
 });

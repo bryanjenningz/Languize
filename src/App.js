@@ -32,85 +32,68 @@ const recordAudio = () =>
     resolve(start);
   });
 
-export const changeText = text => ({
-  type: "CHANGE_TEXT",
-  text
-});
-export const addMessage = message => ({
-  type: "ADD_MESSAGE",
-  message
-});
-export const selectMessage = messageID => ({
-  type: "SELECT_MESSAGE",
-  messageID
-});
-export const editMessage = message => ({
-  type: "EDIT_MESSAGE",
-  message
-});
-export const saveMessage = message => ({
-  type: "SAVE_MESSAGE",
-  message
-});
-export const stopEditingMessage = () => ({
-  type: "STOP_EDITING_MESSAGE"
-});
-export const openRecorder = messageID => ({
-  type: "OPEN_RECORDER",
-  messageID
-});
-export const startRecording = recordingPromise => ({
-  type: "START_RECORDING",
-  recordingPromise
-});
-export const stopRecording = recording => ({
-  type: "STOP_RECORDING",
-  recording
-});
-export const saveRecording = () => ({
-  type: "SAVE_RECORDING"
-});
-export const closeRecorder = () => ({
-  type: "CLOSE_RECORDER"
-});
-
 export const initialState = {
   text: "",
   messages: [
-    { id: "1", text: "Hello", audio: null, translation: null },
+    {
+      id: "1",
+      text: "Hello",
+      audio: "",
+      translation: "",
+      translationAudio: ""
+    },
     {
       id: "2",
       text: "你好",
-      audio: null,
-      translation: { text: "hello", audio: null }
+      audio: "",
+      translation: "hello",
+      translationAudio: ""
     },
     {
       id: "3",
       text:
         "Hi, how are you doing? I'm doing pretty well. I'm glad we get to talk on this app. It's so cool!",
-      audio: null,
-      translation: null
+      audio: "",
+      translation: "",
+      translationAudio: ""
     },
     {
       id: "4",
       text: "不错，我也很高兴认识你！",
-      audio: null,
-      translation: null
+      audio: "",
+      translation: "",
+      translationAudio: ""
     },
     {
       id: "5",
       text: "Your Chinese is soooooo gooood! How did you learn?",
-      audio: null,
-      translation: {
-        text: "你的中文真棒！你怎么学的？",
-        audio: null
-      }
+      audio: "",
+      translation: "你的中文真棒！你怎么学的？",
+      translationAudio: ""
     }
   ],
-  selectedMessageID: null,
-  editingMessage: null,
-  audioRecording: null
+  editing: null
 };
+
+export const changeText = text => ({ type: "CHANGE_TEXT", text });
+export const addMessage = message => ({ type: "ADD_MESSAGE", message });
+export const startEditingMessage = message => ({
+  type: "START_EDITING_MESSAGE",
+  message
+});
+export const editText = text => ({ type: "EDIT_TEXT", text });
+export const editTranslation = translation => ({
+  type: "EDIT_TRANSLATION",
+  translation
+});
+export const startRecording = ({ audioPromise, isTranslation }) => ({
+  type: "START_RECORDING",
+  audioPromise,
+  isTranslation
+});
+export const stopRecording = audio => ({ type: "STOP_RECORDING", audio });
+export const saveMessage = message => ({ type: "SAVE_MESSAGE" });
+export const cancelEditingMessage = () => ({ type: "CANCEL_EDITING_MESSAGE" });
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -122,76 +105,66 @@ export const reducer = (state = initialState, action) => {
         text: "",
         messages: state.messages.concat(action.message)
       };
-    case "SELECT_MESSAGE":
+    case "START_EDITING_MESSAGE":
       return {
         ...state,
-        selectedMessageID: action.messageID
+        editing: {
+          message: action.message,
+          recording: null
+        }
       };
-    case "EDIT_MESSAGE":
+    case "EDIT_TEXT":
       return {
         ...state,
-        editingMessage: action.message
+        editing: {
+          ...state.editing,
+          message: { ...state.editing.message, text: action.text }
+        }
       };
-    case "SAVE_MESSAGE":
+    case "EDIT_TRANSLATION":
       return {
         ...state,
-        messages: state.messages.map(
-          m => (m.id === action.message.id ? action.message : m)
-        ),
-        editingMessage: null
-      };
-    case "STOP_EDITING_MESSAGE":
-      return {
-        ...state,
-        editingMessage: null
-      };
-    case "OPEN_RECORDER":
-      return {
-        ...state,
-        audioRecording: {
-          type: "WAITING_TO_RECORD",
-          messageID: action.messageID
+        editing: {
+          ...state.editing,
+          message: { ...state.editing.message, translation: action.translation }
         }
       };
     case "START_RECORDING":
       return {
         ...state,
-        audioRecording: {
-          type: "RECORDING",
-          messageID: state.audioRecording.messageID,
-          recordingPromise: action.recordingPromise
+        editing: {
+          message: state.editing.message,
+          recording: {
+            audioPromise: action.audioPromise,
+            isTranslation: action.isTranslation
+          }
         }
       };
     case "STOP_RECORDING":
       return {
         ...state,
-        audioRecording: {
-          type: "DONE_RECORDING",
-          recording: action.recording,
-          messageID: state.audioRecording.messageID
+        editing: {
+          message: {
+            ...state.editing.message,
+            [state.editing.recording.isTranslation
+              ? "translationAudio"
+              : "audio"]: action.audio
+          },
+          recording: null
         }
       };
-    case "SAVE_RECORDING":
+    case "SAVE_MESSAGE":
       return {
         ...state,
         messages: state.messages.map(
-          m =>
-            m.id === state.audioRecording.messageID
-              ? {
-                  ...m,
-                  translation: {
-                    ...(m.translation || { text: "" }),
-                    audio: state.audioRecording.recording
-                  }
-                }
-              : m
+          m => (m.id === state.editing.message.id ? state.editing.message : m)
         ),
-        audioRecording: null
+        editing: null
       };
-    case "CLOSE_RECORDER":
+    case "CANCEL_EDITING_MESSAGE":
       return {
         ...state,
-        audioRecording: null
+        editing: null
       };
     default:
       return state;
@@ -203,20 +176,14 @@ const randomId = () => String(Math.random()).slice(2);
 const App = ({
   text,
   messages,
-  selectedMessageID,
-  editingMessage,
-  audioRecording,
+  editing,
   changeText,
   addMessage,
-  selectMessage,
-  editMessage,
-  saveMessage,
-  stopEditingMessage,
-  openRecorder,
+  startEditingMessage,
   startRecording,
   stopRecording,
-  saveRecording,
-  closeRecorder
+  saveMessage,
+  cancelEditingMessage
 }) => (
   <div
     style={{
@@ -227,7 +194,7 @@ const App = ({
       padding: 10
     }}
   >
-    {editingMessage ? (
+    {editing ? (
       <div
         style={{
           position: "absolute",
@@ -248,7 +215,7 @@ const App = ({
           }}
           onClick={e => {
             e.stopPropagation();
-            stopEditingMessage();
+            cancelEditingMessage();
           }}
         />
         <div
@@ -270,7 +237,7 @@ const App = ({
             onClick={e => {
               if (e.currentTarget === e.target) {
                 e.stopPropagation();
-                stopEditingMessage();
+                cancelEditingMessage();
               }
             }}
           >
@@ -284,9 +251,9 @@ const App = ({
               }}
             >
               <textarea
-                value={editingMessage.text}
+                value={editing.message.text}
                 onChange={e => {
-                  editMessage({ ...editingMessage, text: e.target.value });
+                  editText(e.target.value);
                 }}
                 placeholder="Enter text"
                 style={{
@@ -298,24 +265,9 @@ const App = ({
                 }}
               />
               <textarea
-                value={
-                  editingMessage.translation
-                    ? editingMessage.translation.text
-                    : ""
-                }
+                value={editing.message.translation}
                 onChange={e => {
-                  if (editingMessage) {
-                    editMessage({
-                      ...editingMessage,
-                      translation: {
-                        ...(editingMessage.translation || {
-                          text: "",
-                          audio: null
-                        }),
-                        text: e.target.value
-                      }
-                    });
-                  }
+                  editTranslation(e.target.value);
                 }}
                 placeholder="Enter translation"
                 style={{
@@ -344,16 +296,7 @@ const App = ({
                     alignItems: "center",
                     cursor: "pointer"
                   }}
-                  onClick={() => {
-                    if (
-                      editingMessage &&
-                      editingMessage.text.trim() &&
-                      (!editingMessage.translation ||
-                        editingMessage.translation.text.trim())
-                    ) {
-                      saveMessage(editingMessage);
-                    }
-                  }}
+                  onClick={saveMessage}
                 >
                   ✔
                 </div>
@@ -367,150 +310,10 @@ const App = ({
                     alignItems: "center",
                     cursor: "pointer"
                   }}
-                  onClick={stopEditingMessage}
+                  onClick={cancelEditingMessage}
                 >
                   ✖
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    ) : null}
-    {audioRecording ? (
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            zIndex: 1
-          }}
-          onClick={e => {
-            e.stopPropagation();
-            if (e.currentTarget === e.target) {
-              closeRecorder();
-            }
-          }}
-        />
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center"
-          }}
-        >
-          <div
-            style={{
-              height: 230,
-              width: "100vw",
-              zIndex: 2
-            }}
-            onClick={e => {
-              e.stopPropagation();
-              if (e.currentTarget === e.target) {
-                closeRecorder();
-              }
-            }}
-          >
-            <div
-              style={{
-                maxWidth: 680,
-                height: "100%",
-                backgroundColor: "white",
-                margin: "0 auto",
-                padding: 20
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  height: 50,
-                  fontSize: 20,
-                  backgroundColor:
-                    audioRecording.type === "RECORDING" ? "#c71334" : "#13c713",
-                  color: "white",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  marginBottom: 20
-                }}
-                onClick={async e => {
-                  e.stopPropagation();
-                  if (audioRecording.type === "RECORDING") {
-                    const {
-                      audioUrl
-                    } = await audioRecording.recordingPromise();
-                    stopRecording(audioUrl);
-                  } else {
-                    const start = await recordAudio();
-                    startRecording(start());
-                  }
-                }}
-              >
-                {audioRecording.type === "RECORDING" ? "STOP" : "RECORD"}
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  height: 50,
-                  fontSize: 20,
-                  backgroundColor: "#13c713",
-                  color: "white",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  marginBottom: 20,
-                  visibility:
-                    audioRecording.type === "DONE_RECORDING" ? "" : "hidden"
-                }}
-                onClick={e => {
-                  e.stopPropagation();
-                  new Audio(audioRecording.recording).play();
-                }}
-              >
-                PLAY AUDIO
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  height: 50,
-                  fontSize: 20,
-                  backgroundColor:
-                    audioRecording.type === "DONE_RECORDING"
-                      ? "#13c713"
-                      : "#cccccc",
-                  color:
-                    audioRecording.type === "DONE_RECORDING"
-                      ? "white"
-                      : "#888888",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer"
-                }}
-                onClick={e => {
-                  e.stopPropagation();
-                  if (audioRecording.type === "DONE_RECORDING") {
-                    saveRecording();
-                  }
-                }}
-              >
-                SAVE
               </div>
             </div>
           </div>
@@ -541,69 +344,47 @@ const App = ({
               }}
               onClick={e => {
                 e.stopPropagation();
-                editMessage({
-                  id: m.id,
-                  text: m.text,
-                  audio: m.audio,
-                  translation: m.translation
-                    ? { text: m.translation.text, audio: m.translation.audio }
-                    : null
-                });
+                startEditingMessage(m);
               }}
             >
               ✎
             </div>
-            <div
-              style={{
-                position: "absolute",
-                left: 15,
-                bottom: 15,
-                cursor: "pointer"
-              }}
-              onClick={e => {
-                e.stopPropagation();
-                if (m.translation && m.translation.audio) {
-                  new Audio(m.translation.audio).play();
-                } else {
-                  openRecorder(m.id);
-                }
-              }}
-            >
-              <span role="img" aria-label="record-audio">
-                🔊
-              </span>
-            </div>
-            {m.translation ? (
+            {m.audio ? (
               <div
-                style={
-                  m.id === selectedMessageID
-                    ? {
-                        position: "absolute",
-                        top: 10,
-                        right: 15,
-                        fontSize: 25,
-                        userSelect: "none",
-                        cursor: "pointer"
-                      }
-                    : {
-                        position: "absolute",
-                        top: -20,
-                        right: 10,
-                        fontSize: 50,
-                        userSelect: "none",
-                        cursor: "pointer"
-                      }
-                }
-                onClick={e => {
-                  e.stopPropagation();
-                  selectMessage(m.id === selectedMessageID ? null : m.id);
+                style={{
+                  position: "absolute",
+                  left: 15,
+                  top: 15,
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  new Audio(m.audio).play();
                 }}
               >
-                {m.id === selectedMessageID ? "⌃" : "⌄"}
+                <span role="img" aria-label="play text audio">
+                  🔊
+                </span>
+              </div>
+            ) : null}
+            {m.translationAudio ? (
+              <div
+                style={{
+                  position: "absolute",
+                  left: 15,
+                  bottom: 15,
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  new Audio(m.translationAudio).play();
+                }}
+              >
+                <span role="img" aria-label="play translation audio">
+                  🔊
+                </span>
               </div>
             ) : null}
             {m.text}
-            {m.translation && m.id === selectedMessageID ? (
+            {m.translation ? (
               <div>
                 <div
                   style={{
@@ -614,7 +395,7 @@ const App = ({
                     paddingTop: 10
                   }}
                 >
-                  <div>{m.translation.text}</div>
+                  <div>{m.translation}</div>
                 </div>
               </div>
             ) : null}
@@ -642,7 +423,13 @@ const App = ({
         />
         <div
           onClick={() =>
-            addMessage({ id: randomId(), text, audio: null, translation: null })
+            addMessage({
+              id: randomId(),
+              text,
+              audio: "",
+              translation: "",
+              translationAudio: ""
+            })
           }
           style={{
             width: "20%",
@@ -667,15 +454,13 @@ const mapState = state => state;
 const mapDispatch = {
   changeText,
   addMessage,
-  selectMessage,
-  editMessage,
+  startEditingMessage,
+  editText,
+  editTranslation,
   saveMessage,
-  stopEditingMessage,
-  openRecorder,
+  cancelEditingMessage,
   startRecording,
-  stopRecording,
-  saveRecording,
-  closeRecorder
+  stopRecording
 };
 
 export default connect(mapState, mapDispatch)(App);

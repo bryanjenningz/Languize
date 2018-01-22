@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { connect } from "react-redux";
 
@@ -33,91 +32,49 @@ const recordAudio = () =>
     resolve(start);
   });
 
-type ID = string;
-
-type Audio = string;
-
-type Translation = {
-  text: string,
-  audio: ?Audio
-};
-
-type Message = {
-  id: ID,
-  text: string,
-  audio: ?Audio,
-  translation: ?Translation
-};
-
-type AudioRecording =
-  | { type: "WAITING_TO_RECORD" }
-  | { type: "RECORDING" }
-  | { type: "DONE_RECORDING", recording: Audio };
-
-type State = {
-  text: string,
-  messages: Message[],
-  selectedMessageID: ?ID,
-  editingMessage: ?Message,
-  audioRecording: ?AudioRecording
-};
-
-type Action =
-  | {| type: "CHANGE_TEXT", text: string |}
-  | {| type: "ADD_MESSAGE", message: Message |}
-  | {| type: "SELECT_MESSAGE", messageID: ?ID |}
-  | {| type: "EDIT_MESSAGE", message: Message |}
-  | {| type: "SAVE_MESSAGE", message: Message |}
-  | {| type: "STOP_EDITING_MESSAGE" |}
-  | {| type: "OPEN_RECORDER", messageID: ID |}
-  | {| type: "START_RECORDING", recordingPromise: Promise |}
-  | {| type: "STOP_RECODRING", recording: Audio |}
-  | {| type: "SAVE_RECORDING" |}
-  | {| type: "CLOSE_RECORDING" |};
-
-export const changeText: string => Action = text => ({
+export const changeText = text => ({
   type: "CHANGE_TEXT",
   text
 });
-export const addMessage: Message => Action = message => ({
+export const addMessage = message => ({
   type: "ADD_MESSAGE",
   message
 });
-export const selectMessage: (?ID) => Action = messageID => ({
+export const selectMessage = messageID => ({
   type: "SELECT_MESSAGE",
   messageID
 });
-export const editMessage: Message => Action = message => ({
+export const editMessage = message => ({
   type: "EDIT_MESSAGE",
   message
 });
-export const saveMessage: Message => Action = message => ({
+export const saveMessage = message => ({
   type: "SAVE_MESSAGE",
   message
 });
-export const stopEditingMessage: () => Action = () => ({
+export const stopEditingMessage = () => ({
   type: "STOP_EDITING_MESSAGE"
 });
-export const openRecorder: ID => Action = messageID => ({
+export const openRecorder = messageID => ({
   type: "OPEN_RECORDER",
   messageID
 });
-export const startRecording: Promise => Action = recordingPromise => ({
+export const startRecording = recordingPromise => ({
   type: "START_RECORDING",
   recordingPromise
 });
-export const stopRecording: Audio => Action = recording => ({
+export const stopRecording = recording => ({
   type: "STOP_RECORDING",
   recording
 });
-export const saveRecording: () => Action = () => ({
+export const saveRecording = () => ({
   type: "SAVE_RECORDING"
 });
-export const closeRecorder: () => Action = () => ({
+export const closeRecorder = () => ({
   type: "CLOSE_RECORDER"
 });
 
-export const initialState: State = {
+export const initialState = {
   text: "",
   messages: [
     { id: "1", text: "Hello", audio: null, translation: null },
@@ -155,10 +112,7 @@ export const initialState: State = {
   audioRecording: null
 };
 
-export const reducer: (State, Action) => State = (
-  state = initialState,
-  action
-) => {
+export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "CHANGE_TEXT":
       return { ...state, text: action.text };
@@ -244,28 +198,9 @@ export const reducer: (State, Action) => State = (
   }
 };
 
-const randomId: () => string = () => String(Math.random()).slice(2);
+const randomId = () => String(Math.random()).slice(2);
 
-type ActionCreators = {
-  changeText: string => Action,
-  addMessage: Message => Action,
-  selectMessage: ID => Action,
-  editMessage: Message => Action,
-  saveMessage: Message => Action,
-  stopEditingMessage: () => Action,
-  openRecorder: ID => Action,
-  startRecording: Promise => Action,
-  stopRecording: Audio => Action,
-  saveRecording: () => Action,
-  closeRecorder: () => Action
-};
-
-type AppProps = {|
-  ...State,
-  ...ActionCreators
-|};
-
-const App: AppProps => React$Element<*> = ({
+const App = ({
   text,
   messages,
   selectedMessageID,
@@ -727,9 +662,9 @@ const App: AppProps => React$Element<*> = ({
   </div>
 );
 
-const mapState: State => State = state => state;
+const mapState = state => state;
 
-const mapDispatch: ActionCreators = {
+const mapDispatch = {
   changeText,
   addMessage,
   selectMessage,

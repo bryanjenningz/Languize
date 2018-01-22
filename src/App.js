@@ -180,6 +180,8 @@ const App = ({
   changeText,
   addMessage,
   startEditingMessage,
+  editText,
+  editTranslation,
   startRecording,
   stopRecording,
   saveMessage,

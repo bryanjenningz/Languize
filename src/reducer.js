@@ -38,7 +38,16 @@ const initialState = {
       translationAudio: ""
     }
   ],
-  editing: null
+  editing: {
+    message: {
+      id: "4",
+      text: "不错，我也很高兴认识你！",
+      audio: "",
+      translation: "",
+      translationAudio: ""
+    },
+    recording: null
+  }
 };
 
 export const changeText = text => ({ type: "CHANGE_TEXT", text });

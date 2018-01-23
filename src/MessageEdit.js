@@ -55,125 +55,180 @@ const MessageEdit = ({
     <AppBar title={`Editing: ${message.text}`} onBack={cancelEditingMessage} />
     <div
       style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        zIndex: 1
+        maxWidth: 680,
+        margin: "80px auto",
+        padding: "0 10px",
+        display: "flex",
+        flexDirection: "column"
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.7)",
-          zIndex: 1
+      <textarea
+        value={message.text}
+        onChange={e => {
+          editText(e.target.value);
         }}
-        onClick={e => {
-          e.stopPropagation();
-          cancelEditingMessage();
+        placeholder="Enter text"
+        style={{
+          width: "100%",
+          height: 70,
+          fontSize: 15,
+          marginBottom: 10,
+          border: 0
         }}
       />
+      {message.audio ? (
+        <div
+          style={{
+            width: "100%",
+            height: 50,
+            fontSize: 15,
+            marginBottom: 10,
+            color: "white",
+            backgroundColor: "#13c713",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer"
+          }}
+          onClick={() => {
+            new Audio(message.audio).play();
+          }}
+        >
+          PLAY AUDIO
+        </div>
+      ) : null}
       <div
         style={{
-          position: "absolute",
           width: "100%",
-          height: "100%",
+          height: 50,
+          fontSize: 15,
+          marginBottom: 10,
+          color: "white",
+          backgroundColor:
+            recording && !recording.isTranslation ? "#c71334" : "#13c713",
           display: "flex",
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
+          cursor: "pointer"
+        }}
+        onClick={async () => {
+          if (recording && !recording.isTranslation) {
+            const { audioUrl } = recording.audioPromise();
+            stopRecording(audioUrl);
+          } else {
+            const start = await recordAudio();
+            startRecording({
+              audioPromise: start(),
+              isTranslation: false
+            });
+          }
+        }}
+      >
+        {recording && !recording.isTranslation
+          ? "STOP RECORDING"
+          : "START RECORDING"}
+      </div>
+      <textarea
+        value={message.translation}
+        onChange={e => {
+          editTranslation(e.target.value);
+        }}
+        placeholder="Enter translation"
+        style={{
+          width: "100%",
+          height: 70,
+          fontSize: 15,
+          marginBottom: 10,
+          border: 0
+        }}
+      />
+      {message.translationAudio ? (
+        <div
+          style={{
+            width: "100%",
+            height: 50,
+            fontSize: 15,
+            marginBottom: 10,
+            color: "white",
+            backgroundColor: "#13c713",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer"
+          }}
+          onClick={() => {
+            new Audio(message.translationAudio).play();
+          }}
+        >
+          PLAY TRANSLATION AUDIO
+        </div>
+      ) : null}
+      <div
+        style={{
+          width: "100%",
+          height: 50,
+          fontSize: 15,
+          marginBottom: 10,
+          color: "white",
+          backgroundColor:
+            recording && recording.isTranslation ? "#c71334" : "#13c713",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer"
+        }}
+        onClick={async () => {
+          if (recording && recording.isTranslation) {
+            const { audioUrl } = await recording.audioPromise();
+            stopRecording(audioUrl);
+          } else {
+            const start = await recordAudio();
+            startRecording({
+              audioPromise: start(),
+              isTranslation: true
+            });
+          }
+        }}
+      >
+        {recording && recording.isTranslation
+          ? "STOP RECORDING"
+          : "START RECORDING"}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          margin: "0 auto",
+          height: 50
         }}
       >
         <div
           style={{
-            width: "100%",
-            zIndex: 2,
-            padding: "0 10px"
+            flex: 1,
+            color: "white",
+            backgroundColor: "#13c713",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer"
           }}
-          onClick={e => {
-            if (e.currentTarget === e.target) {
-              e.stopPropagation();
-              cancelEditingMessage();
-            }
-          }}
+          onClick={saveMessage}
         >
-          <div
-            style={{
-              maxWidth: 680,
-              margin: "0 auto",
-              height: 270,
-              backgroundColor: "#eee",
-              paddingTop: 25
-            }}
-          >
-            <textarea
-              value={message.text}
-              onChange={e => {
-                editText(e.target.value);
-              }}
-              placeholder="Enter text"
-              style={{
-                width: "80%",
-                height: 70,
-                fontSize: 15,
-                marginBottom: 10,
-                border: 0
-              }}
-            />
-            <textarea
-              value={message.translation}
-              onChange={e => {
-                editTranslation(e.target.value);
-              }}
-              placeholder="Enter translation"
-              style={{
-                width: "80%",
-                height: 70,
-                fontSize: 15,
-                marginBottom: 10,
-                border: 0
-              }}
-            />
-            <div
-              style={{
-                display: "flex",
-                width: "80%",
-                margin: "0 auto",
-                height: 50
-              }}
-            >
-              <div
-                style={{
-                  flex: 1,
-                  color: "white",
-                  backgroundColor: "#13c713",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer"
-                }}
-                onClick={saveMessage}
-              >
-                ✔
-              </div>
-              <div
-                style={{
-                  flex: 1,
-                  color: "white",
-                  backgroundColor: "#c71334",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer"
-                }}
-                onClick={cancelEditingMessage}
-              >
-                ✖
-              </div>
-            </div>
-          </div>
+          ✔
+        </div>
+        <div
+          style={{
+            flex: 1,
+            color: "white",
+            backgroundColor: "#c71334",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer"
+          }}
+          onClick={cancelEditingMessage}
+        >
+          ✖
         </div>
       </div>
     </div>

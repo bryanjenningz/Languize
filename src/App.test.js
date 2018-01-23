@@ -148,3 +148,25 @@ it("stop recording", () => {
     }
   });
 });
+
+it("stop recording", () => {
+  expect(
+    reducer(
+      {
+        editing: {
+          message,
+          recording: {
+            audioPromise: Promise.resolve("hey"),
+            isTranslation: false
+          }
+        }
+      },
+      stopRecording("hey.mp3")
+    )
+  ).toEqual({
+    editing: {
+      message: { ...message, audio: "hey.mp3" },
+      recording: null
+    }
+  });
+});

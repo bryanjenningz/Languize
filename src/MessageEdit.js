@@ -52,7 +52,7 @@ const MessageEdit = ({
   cancelEditingMessage
 }) => (
   <div>
-    <AppBar title={`Editing: ${message.text}`} onBack={cancelEditingMessage} />
+    <AppBar title="Editing Message" onBack={cancelEditingMessage} />
     <div
       style={{
         maxWidth: 680,

@@ -26,19 +26,8 @@ const Chat = ({
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <div style={{ flex: 9, overflow: "auto" }}>
-          {messages.map((m, i) => (
-            <div
-              key={m.id}
-              style={{
-                width: "80%",
-                padding: 30,
-                margin: "20px 0",
-                backgroundColor: "white",
-                fontSize: 20,
-                position: "relative",
-                left: i % 2 === 1 ? "20%" : 0
-              }}
-            >
+          {messages.map((m, i) => {
+            const editButton = (
               <div
                 style={{
                   position: "absolute",
@@ -53,58 +42,75 @@ const Chat = ({
               >
                 ✎
               </div>
-              {m.audio ? (
+            );
+            return (
+              <div key={m.id}>
                 <div
                   style={{
-                    position: "absolute",
-                    left: 15,
-                    top: 15,
-                    cursor: "pointer"
-                  }}
-                  onClick={() => {
-                    new Audio(m.audio).play();
-                  }}
-                >
-                  <span role="img" aria-label="play text audio">
-                    🔊
-                  </span>
-                </div>
-              ) : null}
-              {m.translationAudio ? (
-                <div
-                  style={{
-                    position: "absolute",
-                    left: 15,
-                    bottom: 15,
-                    cursor: "pointer"
-                  }}
-                  onClick={() => {
-                    new Audio(m.translationAudio).play();
+                    width: "80%",
+                    padding: 30,
+                    margin: "20px 0",
+                    backgroundColor: "white",
+                    fontSize: 20,
+                    position: "relative",
+                    left: i % 2 === 1 ? "20%" : 0
                   }}
                 >
-                  <span role="img" aria-label="play translation audio">
-                    🔊
-                  </span>
+                  {editButton}
+                  {m.audio ? (
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: 15,
+                        top: 15,
+                        cursor: "pointer"
+                      }}
+                      onClick={() => {
+                        new Audio(m.audio).play();
+                      }}
+                    >
+                      <span role="img" aria-label="play text audio">
+                        🔊
+                      </span>
+                    </div>
+                  ) : null}
+                  {m.translationAudio ? (
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: 15,
+                        bottom: 15,
+                        cursor: "pointer"
+                      }}
+                      onClick={() => {
+                        new Audio(m.translationAudio).play();
+                      }}
+                    >
+                      <span role="img" aria-label="play translation audio">
+                        🔊
+                      </span>
+                    </div>
+                  ) : null}
+                  {m.text}
+                  {m.translation ? (
+                    <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          borderTop: "1px solid #aaa",
+                          marginTop: 10,
+                          paddingTop: 10
+                        }}
+                      >
+                        <div>{m.translation}</div>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
-              ) : null}
-              {m.text}
-              {m.translation ? (
-                <div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      borderTop: "1px solid #aaa",
-                      marginTop: 10,
-                      paddingTop: 10
-                    }}
-                  >
-                    <div>{m.translation}</div>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
         <div
           style={{

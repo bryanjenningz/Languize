@@ -9,6 +9,9 @@ import {
   saveMessage,
   cancelEditingMessage
 } from "./reducer";
+import PlayArrowIcon from "material-ui-icons/PlayArrow";
+import MicIcon from "material-ui-icons/Mic";
+import StopIcon from "material-ui-icons/Stop";
 
 const recordAudio = () =>
   new Promise(async resolve => {
@@ -94,7 +97,7 @@ const MessageEdit = ({
             new Audio(message.audio).play();
           }}
         >
-          PLAY AUDIO
+          <PlayArrowIcon />
         </div>
       ) : null}
       <div
@@ -124,9 +127,7 @@ const MessageEdit = ({
           }
         }}
       >
-        {recording && !recording.isTranslation
-          ? "STOP RECORDING"
-          : "START RECORDING"}
+        {recording && !recording.isTranslation ? <StopIcon /> : <MicIcon />}
       </div>
       <textarea
         value={message.translation}
@@ -160,7 +161,7 @@ const MessageEdit = ({
             new Audio(message.translationAudio).play();
           }}
         >
-          PLAY TRANSLATION AUDIO
+          <PlayArrowIcon />
         </div>
       ) : null}
       <div
@@ -190,9 +191,7 @@ const MessageEdit = ({
           }
         }}
       >
-        {recording && recording.isTranslation
-          ? "STOP RECORDING"
-          : "START RECORDING"}
+        {recording && recording.isTranslation ? <StopIcon /> : <MicIcon />}
       </div>
       <div
         style={{

@@ -2,6 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import AppBar from "./AppBar";
 import { changeText, addMessage, startEditingMessage } from "./reducer";
+import EditIcon from "material-ui-icons/Edit";
+import VolumeUpIcon from "material-ui-icons/VolumeUp";
 
 const randomId = () => String(Math.random()).slice(2);
 
@@ -49,7 +51,7 @@ const Chat = ({
                     startEditingMessage(m);
                   }}
                 >
-                  ✎
+                  <EditIcon />
                 </div>
                 <div
                   style={{
@@ -73,9 +75,7 @@ const Chat = ({
                         new Audio(m.audio).play();
                       }}
                     >
-                      <span role="img" aria-label="play text audio">
-                        🔊
-                      </span>
+                      <VolumeUpIcon />
                     </div>
                   ) : null}
                   {m.translationAudio ? (
@@ -90,9 +90,7 @@ const Chat = ({
                         new Audio(m.translationAudio).play();
                       }}
                     >
-                      <span role="img" aria-label="play translation audio">
-                        🔊
-                      </span>
+                      <VolumeUpIcon />
                     </div>
                   ) : null}
                   {m.text}

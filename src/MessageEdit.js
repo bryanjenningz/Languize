@@ -74,7 +74,7 @@ const MessageEdit = ({
         style={{
           width: "100%",
           height: 70,
-          fontSize: 15,
+          fontSize: 20,
           marginBottom: 10,
           border: 0
         }}
@@ -138,7 +138,7 @@ const MessageEdit = ({
         style={{
           width: "100%",
           height: 70,
-          fontSize: 15,
+          fontSize: 20,
           marginBottom: 10,
           border: 0
         }}

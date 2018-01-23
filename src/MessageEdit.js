@@ -42,7 +42,8 @@ const recordAudio = () =>
   });
 
 const MessageEdit = ({
-  editing,
+  message,
+  recording,
   editText,
   editTranslation,
   startRecording,
@@ -51,140 +52,138 @@ const MessageEdit = ({
   cancelEditingMessage
 }) => (
   <div>
-    <AppBar
-      title={editing ? `Editing: ${editing.message.text}` : ""}
-      onBack={cancelEditingMessage}
-    />
-    {editing ? (
+    <AppBar title={`Editing: ${message.text}`} onBack={cancelEditingMessage} />
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        zIndex: 1
+      }}
+    >
       <div
         style={{
           position: "absolute",
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
           zIndex: 1
+        }}
+        onClick={e => {
+          e.stopPropagation();
+          cancelEditingMessage();
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
         }}
       >
         <div
           style={{
-            position: "absolute",
             width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            zIndex: 1
+            zIndex: 2,
+            padding: "0 10px"
           }}
           onClick={e => {
-            e.stopPropagation();
-            cancelEditingMessage();
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
+            if (e.currentTarget === e.target) {
+              e.stopPropagation();
+              cancelEditingMessage();
+            }
           }}
         >
           <div
             style={{
-              width: "100%",
-              zIndex: 2,
-              padding: "0 10px"
-            }}
-            onClick={e => {
-              if (e.currentTarget === e.target) {
-                e.stopPropagation();
-                cancelEditingMessage();
-              }
+              maxWidth: 680,
+              margin: "0 auto",
+              height: 270,
+              backgroundColor: "#eee",
+              paddingTop: 25
             }}
           >
+            <textarea
+              value={message.text}
+              onChange={e => {
+                editText(e.target.value);
+              }}
+              placeholder="Enter text"
+              style={{
+                width: "80%",
+                height: 70,
+                fontSize: 15,
+                marginBottom: 10,
+                border: 0
+              }}
+            />
+            <textarea
+              value={message.translation}
+              onChange={e => {
+                editTranslation(e.target.value);
+              }}
+              placeholder="Enter translation"
+              style={{
+                width: "80%",
+                height: 70,
+                fontSize: 15,
+                marginBottom: 10,
+                border: 0
+              }}
+            />
             <div
               style={{
-                maxWidth: 680,
+                display: "flex",
+                width: "80%",
                 margin: "0 auto",
-                height: 270,
-                backgroundColor: "#eee",
-                paddingTop: 25
+                height: 50
               }}
             >
-              <textarea
-                value={editing.message.text}
-                onChange={e => {
-                  editText(e.target.value);
-                }}
-                placeholder="Enter text"
-                style={{
-                  width: "80%",
-                  height: 70,
-                  fontSize: 15,
-                  marginBottom: 10,
-                  border: 0
-                }}
-              />
-              <textarea
-                value={editing.message.translation}
-                onChange={e => {
-                  editTranslation(e.target.value);
-                }}
-                placeholder="Enter translation"
-                style={{
-                  width: "80%",
-                  height: 70,
-                  fontSize: 15,
-                  marginBottom: 10,
-                  border: 0
-                }}
-              />
               <div
                 style={{
+                  flex: 1,
+                  color: "white",
+                  backgroundColor: "#13c713",
                   display: "flex",
-                  width: "80%",
-                  margin: "0 auto",
-                  height: 50
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer"
                 }}
+                onClick={saveMessage}
               >
-                <div
-                  style={{
-                    flex: 1,
-                    color: "white",
-                    backgroundColor: "#13c713",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    cursor: "pointer"
-                  }}
-                  onClick={saveMessage}
-                >
-                  ✔
-                </div>
-                <div
-                  style={{
-                    flex: 1,
-                    color: "white",
-                    backgroundColor: "#c71334",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    cursor: "pointer"
-                  }}
-                  onClick={cancelEditingMessage}
-                >
-                  ✖
-                </div>
+                ✔
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  color: "white",
+                  backgroundColor: "#c71334",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer"
+                }}
+                onClick={cancelEditingMessage}
+              >
+                ✖
               </div>
             </div>
           </div>
         </div>
       </div>
-    ) : null}
+    </div>
   </div>
 );
 
-const mapState = ({ editing }) => ({ editing });
+const mapState = ({ editing }) => ({
+  message: editing && editing.message,
+  recording: editing && editing.recording
+});
 
 const mapDispatch = {
   editText,

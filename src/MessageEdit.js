@@ -113,7 +113,7 @@ const MessageEdit = ({
         }}
         onClick={async () => {
           if (recording && !recording.isTranslation) {
-            const { audioUrl } = recording.audioPromise();
+            const { audioUrl } = await recording.audioPromise();
             stopRecording(audioUrl);
           } else {
             const start = await recordAudio();

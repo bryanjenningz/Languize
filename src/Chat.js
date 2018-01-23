@@ -57,7 +57,8 @@ const Chat = ({
                     padding: 30,
                     margin: "20px 0",
                     backgroundColor: "white",
-                    fontSize: 20
+                    fontSize: 20,
+                    position: "relative"
                   }}
                 >
                   {m.audio ? (

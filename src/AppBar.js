@@ -26,7 +26,7 @@ const styles = {
 };
 
 function ButtonAppBar(props) {
-  const { classes } = props;
+  const { classes, title = "", onBack = () => {} } = props;
   return (
     <div className={classes.root}>
       <AppBar position="fixed" color="default">
@@ -35,11 +35,12 @@ function ButtonAppBar(props) {
             className={classes.leftButton}
             color="inherit"
             aria-label="Back"
+            onClick={onBack}
           >
             <ArrowBackIcon />
           </IconButton>
           <Typography type="title" color="inherit" className={classes.flex}>
-            Chat
+            {title}
           </Typography>
           <IconButton
             className={classes.rightButton}

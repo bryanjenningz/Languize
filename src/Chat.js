@@ -14,7 +14,7 @@ const Chat = ({
   startEditingMessage
 }) => (
   <div>
-    <AppBar />
+    <AppBar title="Chat" />
     <div
       style={{
         textAlign: "center",

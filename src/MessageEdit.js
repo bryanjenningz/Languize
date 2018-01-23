@@ -1,8 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
+import AppBar from "./AppBar";
 import {
   editText,
   editTranslation,
+  startRecording,
+  stopRecording,
   saveMessage,
   cancelEditingMessage
 } from "./reducer";
@@ -42,10 +45,16 @@ const MessageEdit = ({
   editing,
   editText,
   editTranslation,
+  startRecording,
+  stopRecording,
   saveMessage,
   cancelEditingMessage
 }) => (
   <div>
+    <AppBar
+      title={editing ? `Editing: ${editing.message.text}` : ""}
+      onBack={cancelEditingMessage}
+    />
     {editing ? (
       <div
         style={{
@@ -180,6 +189,8 @@ const mapState = ({ editing }) => ({ editing });
 const mapDispatch = {
   editText,
   editTranslation,
+  startRecording,
+  stopRecording,
   saveMessage,
   cancelEditingMessage
 };

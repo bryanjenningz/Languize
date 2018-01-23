@@ -27,36 +27,39 @@ const Chat = ({
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <div style={{ flex: 9, overflow: "auto" }}>
           {messages.map((m, i) => {
-            const editButton = (
+            const isRight = i % 2 === 1;
+            return (
               <div
+                key={m.id}
                 style={{
-                  position: "absolute",
-                  top: 10,
-                  left: 15,
-                  cursor: "pointer"
-                }}
-                onClick={e => {
-                  e.stopPropagation();
-                  startEditingMessage(m);
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: isRight ? "row-reverse" : "row"
                 }}
               >
-                ✎
-              </div>
-            );
-            return (
-              <div key={m.id}>
                 <div
                   style={{
-                    width: "80%",
+                    flex: 1,
+                    top: 10,
+                    left: 15,
+                    cursor: "pointer"
+                  }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    startEditingMessage(m);
+                  }}
+                >
+                  ✎
+                </div>
+                <div
+                  style={{
+                    flex: 4,
                     padding: 30,
                     margin: "20px 0",
                     backgroundColor: "white",
-                    fontSize: 20,
-                    position: "relative",
-                    left: i % 2 === 1 ? "20%" : 0
+                    fontSize: 20
                   }}
                 >
-                  {editButton}
                   {m.audio ? (
                     <div
                       style={{

@@ -1,7 +1,5 @@
 import {
   reducer,
-  changeText,
-  addMessage,
   startEditingMessage,
   editText,
   editTranslation,
@@ -19,14 +17,15 @@ const message = {
   translationAudio: ""
 };
 
-it("changes text", () => {
-  expect(reducer({ text: "" }, changeText("hello"))).toEqual({ text: "hello" });
-});
-
-it("adds message to end of messages", () => {
-  expect(reducer({ messages: [] }, addMessage(message))).toEqual({
-    text: "",
-    messages: [message]
+it("adds message to end of messages when message id isn't in messages", () => {
+  expect(
+    reducer(
+      { messages: [], editing: { message, recording: null } },
+      saveMessage()
+    )
+  ).toEqual({
+    messages: [message],
+    editing: null
   });
 });
 
@@ -111,7 +110,7 @@ it("starts recording", () => {
   });
 });
 
-it("stop recording", () => {
+it("stop recording, is translation", () => {
   expect(
     reducer(
       {
@@ -133,7 +132,7 @@ it("stop recording", () => {
   });
 });
 
-it("stop recording", () => {
+it("stop recording, isn't translation", () => {
   expect(
     reducer(
       {

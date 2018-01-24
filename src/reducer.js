@@ -1,5 +1,4 @@
 const initialState = {
-  text: "",
   messages: [
     {
       id: "1",
@@ -41,8 +40,6 @@ const initialState = {
   editing: null
 };
 
-export const changeText = text => ({ type: "CHANGE_TEXT", text });
-export const addMessage = message => ({ type: "ADD_MESSAGE", message });
 export const startEditingMessage = message => ({
   type: "START_EDITING_MESSAGE",
   message
@@ -63,14 +60,6 @@ export const cancelEditingMessage = () => ({ type: "CANCEL_EDITING_MESSAGE" });
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case "CHANGE_TEXT":
-      return { ...state, text: action.text };
-    case "ADD_MESSAGE":
-      return {
-        ...state,
-        text: "",
-        messages: state.messages.concat(action.message)
-      };
     case "START_EDITING_MESSAGE":
       return {
         ...state,
@@ -120,13 +109,21 @@ export const reducer = (state = initialState, action) => {
         }
       };
     case "SAVE_MESSAGE":
-      return {
-        ...state,
-        messages: state.messages.map(
-          m => (m.id === state.editing.message.id ? state.editing.message : m)
-        ),
-        editing: null
-      };
+      if (state.messages.some(m => m.id === state.editing.message.id)) {
+        return {
+          ...state,
+          messages: state.messages.map(
+            m => (m.id === state.editing.message.id ? state.editing.message : m)
+          ),
+          editing: null
+        };
+      } else {
+        return {
+          ...state,
+          messages: [...state.messages, state.editing.message],
+          editing: null
+        };
+      }
     case "CANCEL_EDITING_MESSAGE":
       return {
         ...state,

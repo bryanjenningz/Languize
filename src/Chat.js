@@ -7,14 +7,7 @@ import VolumeUpIcon from "material-ui-icons/VolumeUp";
 
 const randomId = () => String(Math.random()).slice(2);
 
-const Chat = ({
-  text,
-  messages,
-  editing,
-  changeText,
-  addMessage,
-  startEditingMessage
-}) => (
+const Chat = ({ messages, startEditingMessage }) => (
   <div>
     <AppBar title="Chat" />
     <div
@@ -122,29 +115,18 @@ const Chat = ({
             marginTop: 10
           }}
         >
-          <input
-            placeholder="Enter text here"
-            onChange={e => changeText(e.target.value)}
-            value={text}
-            style={{
-              width: "80%",
-              textAlign: "center",
-              fontSize: 20,
-              border: 0
-            }}
-          />
           <div
             onClick={() =>
-              addMessage({
+              startEditingMessage({
                 id: randomId(),
-                text,
+                text: "",
                 audio: "",
                 translation: "",
                 translationAudio: ""
               })
             }
             style={{
-              width: "20%",
+              width: "100%",
               fontSize: 20,
               display: "flex",
               justifyContent: "center",
@@ -154,7 +136,7 @@ const Chat = ({
               color: "white"
             }}
           >
-            +
+            ADD MESSAGE
           </div>
         </div>
       </div>
@@ -165,8 +147,6 @@ const Chat = ({
 const mapState = state => state;
 
 const mapDispatch = {
-  changeText,
-  addMessage,
   startEditingMessage
 };
 

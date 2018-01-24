@@ -47,6 +47,7 @@ const recordAudio = () =>
 const MessageEdit = ({
   message,
   recording,
+  canSaveMessage,
   editText,
   editTranslation,
   startRecording,
@@ -79,28 +80,28 @@ const MessageEdit = ({
           border: 0
         }}
       />
-      {message.audio ? (
-        <div
-          style={{
-            width: "100%",
-            height: 50,
-            fontSize: 15,
-            marginBottom: 10,
-            color: "white",
-            backgroundColor: "#13c713",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            cursor: "pointer",
-            borderRadius: 100
-          }}
-          onClick={() => {
+      <div
+        style={{
+          width: "100%",
+          height: 50,
+          fontSize: 15,
+          marginBottom: 10,
+          color: message.audio ? "white" : "#888",
+          backgroundColor: message.audio ? "#13c713" : "#ccc",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+          borderRadius: 100
+        }}
+        onClick={() => {
+          if (message.audio) {
             new Audio(message.audio).play();
-          }}
-        >
-          <PlayArrowIcon />
-        </div>
-      ) : null}
+          }
+        }}
+      >
+        <PlayArrowIcon />
+      </div>
       <div
         style={{
           width: "100%",
@@ -145,28 +146,30 @@ const MessageEdit = ({
           border: 0
         }}
       />
-      {message.translationAudio ? (
-        <div
-          style={{
-            width: "100%",
-            height: 50,
-            fontSize: 15,
-            marginBottom: 10,
-            color: "white",
-            backgroundColor: "#13c713",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            cursor: "pointer",
-            borderRadius: 100
-          }}
-          onClick={() => {
+
+      <div
+        style={{
+          width: "100%",
+          height: 50,
+          fontSize: 15,
+          marginBottom: 10,
+          color: message.translationAudio ? "white" : "#888",
+          backgroundColor: message.translationAudio ? "#13c713" : "#ccc",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+          borderRadius: 100
+        }}
+        onClick={() => {
+          if (message.translationAudio) {
             new Audio(message.translationAudio).play();
-          }}
-        >
-          <PlayArrowIcon />
-        </div>
-      ) : null}
+          }
+        }}
+      >
+        <PlayArrowIcon />
+      </div>
+
       <div
         style={{
           width: "100%",
@@ -201,15 +204,19 @@ const MessageEdit = ({
         style={{
           width: "100%",
           height: 50,
-          color: "white",
-          backgroundColor: "#13c713",
+          color: canSaveMessage ? "white" : "#888",
+          backgroundColor: canSaveMessage ? "#13c713" : "#ccc",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           cursor: "pointer",
           borderRadius: 100
         }}
-        onClick={saveMessage}
+        onClick={() => {
+          if (canSaveMessage) {
+            saveMessage();
+          }
+        }}
       >
         SAVE MESSAGE
       </div>
@@ -219,7 +226,8 @@ const MessageEdit = ({
 
 const mapState = ({ editing }) => ({
   message: editing && editing.message,
-  recording: editing && editing.recording
+  recording: editing && editing.recording,
+  canSaveMessage: editing && editing.message.text.trim().length > 0
 });
 
 const mapDispatch = {

@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import AppBar from "./AppBar";
-import { changeText, addMessage, startEditingMessage } from "./reducer";
+import { startEditingMessage } from "./reducer";
 import EditIcon from "material-ui-icons/Edit";
 import VolumeUpIcon from "material-ui-icons/VolumeUp";
 

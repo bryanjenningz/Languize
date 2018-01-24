@@ -91,7 +91,8 @@ const MessageEdit = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            cursor: "pointer"
+            cursor: "pointer",
+            borderRadius: 100
           }}
           onClick={() => {
             new Audio(message.audio).play();
@@ -112,7 +113,8 @@ const MessageEdit = ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          cursor: "pointer"
+          cursor: "pointer",
+          borderRadius: 100
         }}
         onClick={async () => {
           if (recording && !recording.isTranslation) {
@@ -155,7 +157,8 @@ const MessageEdit = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            cursor: "pointer"
+            cursor: "pointer",
+            borderRadius: 100
           }}
           onClick={() => {
             new Audio(message.translationAudio).play();
@@ -176,7 +179,8 @@ const MessageEdit = ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          cursor: "pointer"
+          cursor: "pointer",
+          borderRadius: 100
         }}
         onClick={async () => {
           if (recording && recording.isTranslation) {
@@ -195,40 +199,19 @@ const MessageEdit = ({
       </div>
       <div
         style={{
-          display: "flex",
           width: "100%",
-          margin: "0 auto",
-          height: 50
+          height: 50,
+          color: "white",
+          backgroundColor: "#13c713",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+          borderRadius: 100
         }}
+        onClick={saveMessage}
       >
-        <div
-          style={{
-            flex: 1,
-            color: "white",
-            backgroundColor: "#13c713",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            cursor: "pointer"
-          }}
-          onClick={saveMessage}
-        >
-          ✔
-        </div>
-        <div
-          style={{
-            flex: 1,
-            color: "white",
-            backgroundColor: "#c71334",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            cursor: "pointer"
-          }}
-          onClick={cancelEditingMessage}
-        >
-          ✖
-        </div>
+        SAVE MESSAGE
       </div>
     </div>
   </div>

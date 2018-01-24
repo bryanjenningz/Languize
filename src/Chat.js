@@ -133,7 +133,8 @@ const Chat = ({ messages, startEditingMessage }) => (
               alignItems: "center",
               cursor: "pointer",
               backgroundColor: "#13c713",
-              color: "white"
+              color: "white",
+              borderRadius: 100
             }}
           >
             ADD MESSAGE

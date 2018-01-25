@@ -3,9 +3,9 @@ const initialState = {
     {
       id: "1",
       text: "Hello",
-      audio: "",
+      audio: "aaa",
       translation: "",
-      translationAudio: ""
+      translationAudio: "aaa"
     },
     {
       id: "2",

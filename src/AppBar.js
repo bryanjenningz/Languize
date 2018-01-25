@@ -26,13 +26,14 @@ const styles = {
 };
 
 function ButtonAppBar(props) {
-  const { classes, title = "", onBack = () => {} } = props;
+  const { classes, title = "", onBack } = props;
   return (
     <div className={classes.root}>
       <AppBar position="fixed" color="default">
         <Toolbar>
           <IconButton
             className={classes.leftButton}
+            style={{ visibility: onBack ? "" : "hidden" }}
             color="inherit"
             aria-label="Back"
             onClick={onBack}

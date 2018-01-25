@@ -3,10 +3,10 @@ import { connect } from "react-redux";
 import BottomNavigation, {
   BottomNavigationAction
 } from "material-ui/BottomNavigation";
+import ChatBubbleIcon from "material-ui-icons/ChatBubble";
 import RestoreIcon from "material-ui-icons/Restore";
-import FavoriteIcon from "material-ui-icons/Favorite";
-import LocationOnIcon from "material-ui-icons/LocationOn";
-import FolderIcon from "material-ui-icons/Folder";
+import PeopleIcon from "material-ui-icons/People";
+import PersonPinIcon from "material-ui-icons/PersonPin";
 import { changeRoute } from "./reducer";
 
 const LabelBottomNavigation = ({ route, changeRoute }) => (
@@ -25,22 +25,22 @@ const LabelBottomNavigation = ({ route, changeRoute }) => (
     <BottomNavigationAction
       label="Chats"
       value="Chats"
-      icon={<RestoreIcon />}
+      icon={<ChatBubbleIcon />}
     />
     <BottomNavigationAction
-      label="Study"
-      value="Study"
-      icon={<FavoriteIcon />}
+      label="Review"
+      value="Review"
+      icon={<RestoreIcon />}
     />
     <BottomNavigationAction
       label="People"
       value="People"
-      icon={<LocationOnIcon />}
+      icon={<PeopleIcon />}
     />
     <BottomNavigationAction
       label="Profile"
       value="Profile"
-      icon={<FolderIcon />}
+      icon={<PersonPinIcon />}
     />
   </BottomNavigation>
 );

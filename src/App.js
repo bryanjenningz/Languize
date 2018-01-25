@@ -15,10 +15,12 @@ const App = ({ editing, selectedChatID, route, reviewCards }) => {
         return <Chats />;
       }
     case "Review":
-      return <div>
-        Review
-        {reviewCards.map(c => <div>{JSON.stringify(c)}</div>)}
-      </div>;
+      return (
+        <div>
+          Review
+          {reviewCards.map(c => <div>{JSON.stringify(c)}</div>)}
+        </div>
+      );
     case "People":
       return <div>People</div>;
     case "Profile":

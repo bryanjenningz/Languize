@@ -140,22 +140,43 @@ export const reducer = (state = initialState, action) => {
           recording: null
         }
       };
-    case "SAVE_MESSAGE":
-      if (state.messages.some(m => m.id === state.editing.message.id)) {
+    case "SAVE_MESSAGE": {
+      const chat = state.chats.find(chat => chat.id === state.selectedChatID);
+      if (chat.messages.some(m => m.id === state.editing.message.id)) {
         return {
           ...state,
-          messages: state.messages.map(
-            m => (m.id === state.editing.message.id ? state.editing.message : m)
+          chats: state.chats.map(
+            c =>
+              c.id === chat.id
+                ? {
+                    ...c,
+                    messages: c.messages.map(
+                      m =>
+                        m.id === state.editing.message.id
+                          ? state.editing.message
+                          : m
+                    )
+                  }
+                : c
           ),
           editing: null
         };
       } else {
         return {
           ...state,
-          messages: [...state.messages, state.editing.message],
+          chats: state.chats.map(
+            c =>
+              c.id === chat.id
+                ? {
+                    ...c,
+                    messages: [...c.messages, state.editing.message]
+                  }
+                : c
+          ),
           editing: null
         };
       }
+    }
     case "CANCEL_EDITING_MESSAGE":
       return {
         ...state,

@@ -22,11 +22,16 @@ const message = {
 it("adds message to end of messages when message id isn't in messages", () => {
   expect(
     reducer(
-      { messages: [], editing: { message, recording: null } },
+      {
+        selectedChatID: "123",
+        chats: [{ id: "123", messages: [] }],
+        editing: { message, recording: null }
+      },
       saveMessage()
     )
   ).toEqual({
-    messages: [message],
+    selectedChatID: "123",
+    chats: [{ id: "123", messages: [message] }],
     editing: null
   });
 });
@@ -72,17 +77,19 @@ it("saves message", () => {
   };
   expect(
     reducer(
-      { messages: [message], editing: { message: newMessage } },
+      {
+        selectedChatID: "234",
+        chats: [{ id: "234", messages: [message] }],
+        editing: { message: newMessage }
+      },
       saveMessage()
     )
   ).toEqual({
-    messages: [
+    selectedChatID: "234",
+    chats: [
       {
-        ...message,
-        text: "aaaaa",
-        translation: "bbbbb",
-        audio: "ccc",
-        translationAudio: "dddd"
+        id: "234",
+        messages: [newMessage]
       }
     ],
     editing: null

@@ -1,13 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import AppBar from "./AppBar";
-import { startEditingMessage, selectChatID } from "./reducer";
+import { startEditingMessage, selectChatID, addReviewCard } from "./reducer";
 import EditIcon from "material-ui-icons/Edit";
 import VolumeUpIcon from "material-ui-icons/VolumeUp";
+import AddCircleIcon from "material-ui-icons/AddCircle";
 
 const randomId = () => String(Math.random()).slice(2);
 
-const Chat = ({ messages, name, startEditingMessage, goBackToChats }) => (
+const Chat = ({ messages, name, startEditingMessage, goBackToChats, addReviewCard }) => (
   <div>
     <AppBar title={name} onBack={goBackToChats} />
     <div
@@ -86,6 +87,21 @@ const Chat = ({ messages, name, startEditingMessage, goBackToChats }) => (
                       <VolumeUpIcon />
                     </div>
                   ) : null}
+                  {m.text && m.translation ? (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 15,
+                        right: 15,
+                        cursor: "pointer"
+                      }}
+                      onClick={() => {
+                        addReviewCard({ messageID: m.id, nextReviewTime: Date.now() });
+                      }}
+                    >
+                      <AddCircleIcon />
+                    </div>
+                  ) : null}
                   {m.text}
                   {m.translation ? (
                     <div>
@@ -153,7 +169,8 @@ const mapState = ({ chats, selectedChatID }) =>
 
 const mapDispatch = {
   startEditingMessage,
-  goBackToChats: selectChatID.bind(null, null)
+  goBackToChats: selectChatID.bind(null, null),
+  addReviewCard
 };
 
 export default connect(mapState, mapDispatch)(Chat);

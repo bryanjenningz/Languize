@@ -4,7 +4,7 @@ import Chats from "./Chats";
 import Chat from "./Chat";
 import MessageEdit from "./MessageEdit";
 
-const App = ({ editing, selectedChatID, route }) => {
+const App = ({ editing, selectedChatID, route, reviewCards }) => {
   switch (route) {
     case "Chats":
       if (editing) {
@@ -15,7 +15,10 @@ const App = ({ editing, selectedChatID, route }) => {
         return <Chats />;
       }
     case "Review":
-      return <div>Review</div>;
+      return <div>
+        Review
+        {reviewCards.map(c => <div>{JSON.stringify(c)}</div>)}
+      </div>;
     case "People":
       return <div>People</div>;
     case "Profile":
@@ -25,8 +28,9 @@ const App = ({ editing, selectedChatID, route }) => {
   }
 };
 
-export default connect(({ editing, selectedChatID, route }) => ({
+export default connect(({ editing, selectedChatID, route, reviewCards }) => ({
   editing,
   selectedChatID,
-  route
+  route,
+  reviewCards
 }))(App);

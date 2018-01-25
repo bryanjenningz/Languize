@@ -67,7 +67,8 @@ const initialState = {
   ],
   selectedChatID: null,
   editing: null,
-  route: "Chats"
+  route: "Chats",
+  reviewCards: []
 };
 
 export const startEditingMessage = message => ({

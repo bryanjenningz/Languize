@@ -155,22 +155,29 @@ it("stop recording, isn't translation", () => {
   });
 });
 
-it("selects chat ID", () => {
+it("unselects chat ID", () => {
   expect(
     reducer(
       {
+        selectedChatID: "c123",
+        chats: [{ id: "c123" }]
+      },
+      selectChatID(null)
+    )
+  ).toEqual({ selectedChatID: null, chats: [{ id: "c123" }] });
+});
+
+it("removes unread messages when messages are seen", () => {
+  expect(
+    reducer(
+      {
+        chats: [{ id: "c123", unreadMessageCount: 2 }],
         selectedChatID: null
       },
       selectChatID("c123")
     )
-  ).toEqual({ selectedChatID: "c123" });
-
-  expect(
-    reducer(
-      {
-        selectedChatID: "c123"
-      },
-      selectChatID(null)
-    )
-  ).toEqual({ selectedChatID: null });
+  ).toEqual({
+    chats: [{ id: "c123", unreadMessageCount: 0 }],
+    selectedChatID: "c123"
+  });
 });

@@ -3,6 +3,7 @@ const initialState = {
     {
       id: "c1",
       name: "Bob",
+      unreadMessageCount: 2,
       messages: [
         {
           id: "1",
@@ -45,6 +46,7 @@ const initialState = {
     {
       id: "c2",
       name: "Bill",
+      unreadMessageCount: 0,
       messages: [
         {
           id: "4",
@@ -158,10 +160,23 @@ export const reducer = (state = initialState, action) => {
         editing: null
       };
     case "SELECT_CHAT_ID":
-      return {
-        ...state,
-        selectedChatID: action.chatID
-      };
+      if (state.chats.some(chat => chat.id === action.chatID)) {
+        return {
+          ...state,
+          chats: state.chats.map(
+            chat =>
+              chat.id === action.chatID
+                ? { ...chat, unreadMessageCount: 0 }
+                : chat
+          ),
+          selectedChatID: action.chatID
+        };
+      } else {
+        return {
+          ...state,
+          selectedChatID: null
+        };
+      }
     default:
       return state;
   }

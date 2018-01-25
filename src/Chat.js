@@ -146,9 +146,8 @@ const Chat = ({ messages, startEditingMessage, goBackToChats }) => (
 );
 
 const mapState = ({ chats, selectedChatID }) => ({
-  messages: (
-    chats.find(chat => chat.id === selectedChatID) || { messages: [] }
-  ).messages
+  messages: (chats.find(chat => chat.id === selectedChatID) || { messages: [] })
+    .messages
 });
 
 const mapDispatch = {

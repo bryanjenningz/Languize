@@ -63,7 +63,7 @@ const initialState = {
       ]
     }
   ],
-  selectedChatID: "c1",
+  selectedChatID: null,
   editing: null
 };
 

@@ -66,7 +66,8 @@ const initialState = {
     }
   ],
   selectedChatID: null,
-  editing: null
+  editing: null,
+  route: "Chats"
 };
 
 export const startEditingMessage = message => ({
@@ -87,6 +88,7 @@ export const stopRecording = audio => ({ type: "STOP_RECORDING", audio });
 export const saveMessage = message => ({ type: "SAVE_MESSAGE" });
 export const cancelEditingMessage = () => ({ type: "CANCEL_EDITING_MESSAGE" });
 export const selectChatID = chatID => ({ type: "SELECT_CHAT_ID", chatID });
+export const changeRoute = route => ({ type: "CHANGE_ROUTE", route });
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -177,6 +179,11 @@ export const reducer = (state = initialState, action) => {
           selectedChatID: null
         };
       }
+    case "CHANGE_ROUTE":
+      return {
+        ...state,
+        route: action.route
+      };
     default:
       return state;
   }

@@ -7,7 +7,8 @@ import {
   cancelEditingMessage,
   startRecording,
   stopRecording,
-  selectChatID
+  selectChatID,
+  changeRoute
 } from "./reducer";
 
 const message = {
@@ -180,4 +181,15 @@ it("removes unread messages when messages are seen", () => {
     chats: [{ id: "c123", unreadMessageCount: 0 }],
     selectedChatID: "c123"
   });
+});
+
+it("changes route", () => {
+  expect(
+    reducer(
+      {
+        route: "hello"
+      },
+      changeRoute("hi")
+    )
+  ).toEqual({ route: "hi" });
 });

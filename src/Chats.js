@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { selectChatID } from "./reducer";
 import AppBar from "./AppBar";
+import BottomNav from "./BottomNav";
 
 const Chats = ({ chats, selectChatID }) => (
   <div>
@@ -59,6 +60,7 @@ const Chats = ({ chats, selectChatID }) => (
         </div>
       ))}
     </div>
+    <BottomNav />
   </div>
 );
 

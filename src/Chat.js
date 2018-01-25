@@ -147,7 +147,7 @@ const Chat = ({ messages, startEditingMessage, goBackToChats }) => (
 
 const mapState = ({ chats, selectedChatID }) => ({
   messages: (
-    Achats.find(chat => chat.id === selectedChatID) || { messages: [] }
+    chats.find(chat => chat.id === selectedChatID) || { messages: [] }
   ).messages
 });
 

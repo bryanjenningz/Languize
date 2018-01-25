@@ -7,9 +7,9 @@ import VolumeUpIcon from "material-ui-icons/VolumeUp";
 
 const randomId = () => String(Math.random()).slice(2);
 
-const Chat = ({ messages, startEditingMessage, goBackToChats }) => (
+const Chat = ({ messages, name, startEditingMessage, goBackToChats }) => (
   <div>
-    <AppBar title="Chat" onBack={goBackToChats} />
+    <AppBar title={name} onBack={goBackToChats} />
     <div
       style={{
         textAlign: "center",
@@ -145,10 +145,11 @@ const Chat = ({ messages, startEditingMessage, goBackToChats }) => (
   </div>
 );
 
-const mapState = ({ chats, selectedChatID }) => ({
-  messages: (chats.find(chat => chat.id === selectedChatID) || { messages: [] })
-    .messages
-});
+const mapState = ({ chats, selectedChatID }) =>
+  chats.find(chat => chat.id === selectedChatID) || {
+    name: "Chat",
+    messages: []
+  };
 
 const mapDispatch = {
   startEditingMessage,

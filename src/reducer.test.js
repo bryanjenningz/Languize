@@ -6,7 +6,8 @@ import {
   saveMessage,
   cancelEditingMessage,
   startRecording,
-  stopRecording
+  stopRecording,
+  selectChatID
 } from "./reducer";
 
 const message = {
@@ -152,4 +153,24 @@ it("stop recording, isn't translation", () => {
       recording: null
     }
   });
+});
+
+it("selects chat ID", () => {
+  expect(
+    reducer(
+      {
+        selectedChatID: null
+      },
+      selectChatID("c123")
+    )
+  ).toEqual({ selectedChatID: "c123" });
+
+  expect(
+    reducer(
+      {
+        selectedChatID: "c123"
+      },
+      selectChatID(null)
+    )
+  ).toEqual({ selectedChatID: null });
 });

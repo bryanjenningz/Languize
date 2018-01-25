@@ -1,15 +1,15 @@
 import React from "react";
 import { connect } from "react-redux";
 import AppBar from "./AppBar";
-import { startEditingMessage } from "./reducer";
+import { startEditingMessage, selectChatID } from "./reducer";
 import EditIcon from "material-ui-icons/Edit";
 import VolumeUpIcon from "material-ui-icons/VolumeUp";
 
 const randomId = () => String(Math.random()).slice(2);
 
-const Chat = ({ messages, startEditingMessage }) => (
+const Chat = ({ messages, startEditingMessage, goBackToChats }) => (
   <div>
-    <AppBar title="Chat" />
+    <AppBar title="Chat" onBack={goBackToChats} />
     <div
       style={{
         textAlign: "center",
@@ -145,10 +145,14 @@ const Chat = ({ messages, startEditingMessage }) => (
   </div>
 );
 
-const mapState = state => state;
+const mapState = ({ chats, selectedChatID }) => ({
+  messages: (chats.find(chat => chat.id === selectedChatID) || { messages: [] })
+    .messages
+});
 
 const mapDispatch = {
-  startEditingMessage
+  startEditingMessage,
+  goBackToChats: selectChatID.bind(null, null)
 };
 
 export default connect(mapState, mapDispatch)(Chat);

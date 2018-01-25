@@ -1,42 +1,69 @@
 const initialState = {
-  messages: [
+  chats: [
     {
-      id: "1",
-      text: "Hello",
-      audio: "aaa",
-      translation: "",
-      translationAudio: "aaa"
+      id: "c1",
+      name: "Bob",
+      messages: [
+        {
+          id: "1",
+          text: "Hello",
+          audio: "aaa",
+          translation: "",
+          translationAudio: "aaa"
+        },
+        {
+          id: "2",
+          text: "你好",
+          audio: "aaa",
+          translation: "hello",
+          translationAudio: "aaa"
+        },
+        {
+          id: "3",
+          text:
+            "Hi, how are you doing? I'm doing pretty well. I'm glad we get to talk on this app. It's so cool!",
+          audio: "",
+          translation: "",
+          translationAudio: ""
+        },
+        {
+          id: "4",
+          text: "不错，我也很高兴认识你！",
+          audio: "",
+          translation: "",
+          translationAudio: ""
+        },
+        {
+          id: "5",
+          text: "Your Chinese is soooooo gooood! How did you learn?",
+          audio: "",
+          translation: "你的中文真棒！你怎么学的？",
+          translationAudio: ""
+        }
+      ]
     },
     {
-      id: "2",
-      text: "你好",
-      audio: "aaa",
-      translation: "hello",
-      translationAudio: "aaa"
-    },
-    {
-      id: "3",
-      text:
-        "Hi, how are you doing? I'm doing pretty well. I'm glad we get to talk on this app. It's so cool!",
-      audio: "",
-      translation: "",
-      translationAudio: ""
-    },
-    {
-      id: "4",
-      text: "不错，我也很高兴认识你！",
-      audio: "",
-      translation: "",
-      translationAudio: ""
-    },
-    {
-      id: "5",
-      text: "Your Chinese is soooooo gooood! How did you learn?",
-      audio: "",
-      translation: "你的中文真棒！你怎么学的？",
-      translationAudio: ""
+      id: "c2",
+      name: "Bill",
+      messages: [
+        {
+          id: "4",
+          text: "不错，我也很高兴认识你！",
+          audio: "",
+          translation: "",
+          translationAudio: ""
+        },
+        {
+          id: "5",
+          text: "Your Chinese is soooooo gooood! How did you learn?",
+          audio: "",
+          translation: "你的中文真棒！你怎么学的？",
+          translationAudio: ""
+        }
+      ]
     }
   ],
+  selectedChatID: "c1",
   editing: null
 };
 
@@ -57,6 +84,7 @@ export const startRecording = ({ audioPromise, isTranslation }) => ({
 export const stopRecording = audio => ({ type: "STOP_RECORDING", audio });
 export const saveMessage = message => ({ type: "SAVE_MESSAGE" });
 export const cancelEditingMessage = () => ({ type: "CANCEL_EDITING_MESSAGE" });
+export const selectChatID = chatID => ({ type: "SELECT_CHAT_ID", chatID });
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -128,6 +156,11 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         editing: null
+      };
+    case "SELECT_CHAT_ID":
+      return {
+        ...state,
+        selectedChatID: action.chatID
       };
     default:
       return state;

@@ -8,7 +8,8 @@ import {
   startRecording,
   stopRecording,
   selectChatID,
-  changeRoute
+  changeRoute,
+  addReviewCard
 } from "./reducer";
 
 const message = {
@@ -199,4 +200,29 @@ it("changes route", () => {
       changeRoute("hi")
     )
   ).toEqual({ route: "hi" });
+});
+
+it("adds card to review cards", () => {
+  const message = {
+    id: "m1",
+    text: "hello",
+    translation: "你好",
+    audio: "",
+    translationAudio: ""
+  };
+  const now = Date.now();
+  expect(
+    reducer(
+      {
+        selectedChatID: "123",
+        chats: [{ id: "123", messages: [message] }],
+        reviewCards: []
+      },
+      addReviewCard({ messageID: "m1", nextReviewTime: now })
+    )
+  ).toEqual({
+    selectedChatID: "123",
+    chats: [{ id: "123", messages: [message] }],
+    reviewCards: [{ ...message, score: 0, nextReviewTime: now }]
+  });
 });

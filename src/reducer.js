@@ -89,6 +89,11 @@ export const saveMessage = message => ({ type: "SAVE_MESSAGE" });
 export const cancelEditingMessage = () => ({ type: "CANCEL_EDITING_MESSAGE" });
 export const selectChatID = chatID => ({ type: "SELECT_CHAT_ID", chatID });
 export const changeRoute = route => ({ type: "CHANGE_ROUTE", route });
+export const addReviewCard = ({ messageID, nextReviewTime }) => ({
+  type: "ADD_REVIEW_CARD",
+  messageID,
+  nextReviewTime
+});
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -205,6 +210,25 @@ export const reducer = (state = initialState, action) => {
         ...state,
         route: action.route
       };
+    case "ADD_REVIEW_CARD": {
+      const chat = state.chats.find(chat => chat.id === state.selectedChatID);
+      const message = chat.messages.find(m => m.id === action.messageID);
+      return {
+        ...state,
+        reviewCards: [
+          ...state.reviewCards,
+          {
+            score: 0,
+            nextReviewTime: action.nextReviewTime,
+            id: message.id,
+            text: message.text,
+            audio: message.audio,
+            translation: message.translation,
+            translationAudio: message.translationAudio
+          }
+        ]
+      };
+    }
     default:
       return state;
   }

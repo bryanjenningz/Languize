@@ -4,6 +4,8 @@ import Chats from "./Chats";
 import Chat from "./Chat";
 import MessageEdit from "./MessageEdit";
 import Review from "./Review";
+import People from "./People";
+import Profile from "./Profile";
 
 const App = ({ editing, selectedChatID, route, reviewCards }) => {
   switch (route) {
@@ -18,9 +20,9 @@ const App = ({ editing, selectedChatID, route, reviewCards }) => {
     case "Review":
       return <Review />;
     case "People":
-      return <div>People</div>;
+      return <People />;
     case "Profile":
-      return <div>Profile</div>;
+      return <Profile />;
     default:
       throw new Error(`Invalid route: ${route}`);
   }

@@ -228,8 +228,11 @@ it("adds card to review cards", () => {
   });
 });
 
-it("starts reviewing", () => {
-  expect(reducer({ reviewing: false }, startReviewing())).toEqual({
-    reviewing: true
+it("starts reviewing if there are reviewCards", () => {
+  expect(
+    reducer({ reviewing: false, reviewCards: [{}] }, startReviewing())
+  ).toEqual({
+    reviewing: true,
+    reviewCards: [{}]
   });
 });

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import Chats from "./Chats";
 import Chat from "./Chat";
 import MessageEdit from "./MessageEdit";
+import Review from "./Review";
 
 const App = ({ editing, selectedChatID, route, reviewCards }) => {
   switch (route) {
@@ -15,12 +16,7 @@ const App = ({ editing, selectedChatID, route, reviewCards }) => {
         return <Chats />;
       }
     case "Review":
-      return (
-        <div>
-          Review
-          {reviewCards.map(c => <div>{JSON.stringify(c)}</div>)}
-        </div>
-      );
+      return <Review />;
     case "People":
       return <div>People</div>;
     case "Profile":

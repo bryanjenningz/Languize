@@ -9,7 +9,8 @@ import {
   stopRecording,
   selectChatID,
   changeRoute,
-  addReviewCard
+  addReviewCard,
+  startReviewing
 } from "./reducer";
 
 const message = {
@@ -224,5 +225,11 @@ it("adds card to review cards", () => {
     selectedChatID: "123",
     chats: [{ id: "123", messages: [message] }],
     reviewCards: [{ ...message, score: 0, nextReviewTime: now }]
+  });
+});
+
+it("starts reviewing", () => {
+  expect(reducer({ reviewing: false }, startReviewing())).toEqual({
+    reviewing: true
   });
 });

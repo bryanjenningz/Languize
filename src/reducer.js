@@ -68,7 +68,8 @@ const initialState = {
   selectedChatID: null,
   editing: null,
   route: "Chats",
-  reviewCards: []
+  reviewCards: [],
+  reviewing: false
 };
 
 export const startEditingMessage = message => ({
@@ -95,6 +96,7 @@ export const addReviewCard = ({ messageID, nextReviewTime }) => ({
   messageID,
   nextReviewTime
 });
+export const startReviewing = () => ({ type: "START_REVIEWING" });
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -230,6 +232,11 @@ export const reducer = (state = initialState, action) => {
         ]
       };
     }
+    case "START_REVIEWING":
+      return {
+        ...state,
+        reviewing: true
+      };
     default:
       return state;
   }
